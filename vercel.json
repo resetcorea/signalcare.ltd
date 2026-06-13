@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "name": "signalcare-ai-site",
+  "rewrites": [
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/signup", "destination": "/signup.html" },
+    { "source": "/dashboard", "destination": "/dashboard/index.html" },
+    { "source": "/dashboard/:path*", "destination": "/dashboard/index.html" },
+    { "source": "/api/health", "destination": "/api/health.js" },
+    { "source": "/api/login", "destination": "/api/login.js" },
+    { "source": "/api/logout", "destination": "/api/logout.js" },
+    { "source": "/api/send-email", "destination": "/api/send-email.js" },
+    { "source": "/:path*", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Cache-Control", "value": "public, max-age=1800" }
+      ]
+    }
+  ]
+}

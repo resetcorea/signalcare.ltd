@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SignalCare 회원가입</title>
+<style>
+:root{--bg:#04040a;--s1:#09090f;--s2:#0e0e18;--t1:#eeeeff;--t2:#8d8dbd;--ac:#c2ff47;--gn:#32d96a;--rd:#ff4d6e;--b1:#14143a;--fn:-apple-system,BlinkMacSystemFont,"Pretendard",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 18% 0%,rgba(194,255,71,.1),transparent 34%),radial-gradient(circle at 90% 100%,rgba(0,204,255,.08),transparent 34%),var(--bg);color:var(--t1);font-family:var(--fn);padding:24px}
+.box{width:min(560px,100%);background:rgba(9,9,15,.96);border:1px solid var(--b1);border-radius:16px;padding:30px;box-shadow:0 24px 80px rgba(0,0,0,.45)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:10px}.mark{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--ac),#00ccff);display:grid;place-items:center;color:#000;font-weight:900}.name{font-weight:900;letter-spacing:.02em}.name em{color:var(--ac);font-style:normal}
+.lang{border:1px solid var(--b1);background:var(--s2);color:var(--t1);border-radius:10px;padding:10px 12px;font:800 14px var(--fn);outline:none}
+h1{font-size:34px;margin:0 0 10px;letter-spacing:0;line-height:1.15}p{color:var(--t2);margin:0 0 24px;line-height:1.7;font-size:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}
+label{display:block;color:var(--t1);font-size:16px;font-weight:850;margin:0 0 8px}
+input,select,textarea{width:100%;border:1px solid var(--b1);background:var(--s2);border-radius:10px;color:var(--t1);font:600 17px var(--fn);padding:15px;outline:none}
+textarea{min-height:120px;resize:vertical;line-height:1.6}input::placeholder,textarea::placeholder{color:#5f5f8e}input:focus,select:focus,textarea:focus{border-color:rgba(194,255,71,.6);box-shadow:0 0 0 3px rgba(194,255,71,.08)}
+button,.link{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:10px;padding:14px 18px;font-weight:900;text-decoration:none;cursor:pointer}
+button{width:100%;margin-top:20px;background:var(--ac);color:#000;font-size:18px}.link{color:var(--t1);border:1px solid var(--b1);margin-top:10px;width:100%;font-size:16px;background:rgba(255,255,255,.02)}
+.status{min-height:22px;margin-top:13px;font-weight:750;font-size:14px;color:var(--t2);line-height:1.5}.status.ok{color:var(--gn)}.status.err{color:var(--rd)}
+html[dir="rtl"] body{text-align:right}html[dir="rtl"] .top,html[dir="rtl"] .brand{flex-direction:row-reverse}
+@media(max-width:620px){body{padding:16px}.box{padding:22px}.top{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr}h1{font-size:30px}}
+</style>
+</head>
+<body>
+<main class="box">
+  <div class="top">
+    <div class="brand"><div class="mark">S</div><div class="name">SIGNAL<em>CARE</em>.ltd</div></div>
+    <select class="lang" id="langSelect" aria-label="Language">
+      <option value="ko">한국어</option>
+      <option value="en">English</option>
+      <option value="th">ภาษาไทย</option>
+      <option value="vi">Tiếng Việt</option>
+      <option value="id">Bahasa Indonesia</option>
+      <option value="ar">العربية</option>
+      <option value="zh">中文</option>
+      <option value="ru">Русский</option>
+    </select>
+  </div>
+  <h1 id="titleText">회원가입</h1>
+  <p id="leadText">SignalCare 유료서비스 데모버전 계정 생성을 요청합니다. 요청 내용은 SignalCare 담당자에게 이메일로 전달되고, 검토 후 계정 접속을 안내합니다.</p>
+  <form id="signupForm">
+    <div class="grid">
+      <div><label for="name" id="nameLabel">이름</label><input id="name" name="name" required autocomplete="name"></div>
+      <div><label for="company" id="companyLabel">회사/기관</label><input id="company" name="company" autocomplete="organization"></div>
+      <div><label for="email" id="emailLabel">이메일</label><input id="email" name="email" type="email" required autocomplete="email"></div>
+      <div><label for="country" id="countryLabel">국가</label><input id="country" name="country" autocomplete="country-name"></div>
+      <div class="full"><label for="type" id="typeLabel">가입 유형</label><select id="type" name="type"></select></div>
+      <div class="full"><label for="message" id="messageLabel">요청 내용</label><textarea id="message" name="message" required placeholder="필요한 계정, 사업장, 파일럿 또는 도입 목적을 적어주세요."></textarea></div>
+    </div>
+    <button type="submit" id="submitBtn">회원가입 요청</button>
+    <div class="status" id="status"></div>
+  </form>
+  <a class="link" id="loginLink" href="/login">이미 계정이 있나요? 로그인</a>
+  <a class="link" id="homeLink" href="/">홈으로</a>
+</main>
+<script>
+const T={
+  ko:{dir:'ltr',title:'SignalCare 회원가입',h:'회원가입',lead:'SignalCare 유료서비스 데모버전 계정 생성을 요청합니다. 요청 내용은 SignalCare 담당자에게 이메일로 전달되고, 검토 후 계정 접속을 안내합니다.',name:'이름',company:'회사/기관',email:'이메일',country:'국가',type:'가입 유형',message:'요청 내용',messagePh:'필요한 계정, 사업장, 파일럿 또는 도입 목적을 적어주세요.',options:['유료서비스 데모버전 계정','AI MRV 파일럿','엔터프라이즈 협의','금융기관','기술 파트너'],submit:'회원가입 요청',sending:'전송 중...',sendingStatus:'회원가입 요청을 전송하고 있습니다.',ok:'회원가입 요청이 전송되었습니다. SignalCare 팀이 검토 후 이메일로 안내합니다.',fallback:'이메일 API 설정이 필요합니다. contact@signalcare.ltd 로 문의해주세요.',failed:'회원가입 요청을 전송하지 못했습니다.',unavailable:'회원가입 요청 서비스를 사용할 수 없습니다.',login:'이미 계정이 있나요? 로그인',home:'홈으로'},
+  en:{dir:'ltr',title:'SignalCare Sign Up',h:'Sign Up',lead:'Request an account for the SignalCare paid service demo. Your request is emailed to SignalCare and access is approved after review.',name:'Name',company:'Company / Organization',email:'Email',country:'Country',type:'Account Type',message:'Request Details',messagePh:'Tell us which account, site, pilot, or deployment you need.',options:['Paid Service Demo Account','AI MRV Pilot','Enterprise Consultation','Financial Institution','Technical Partner'],submit:'Submit Sign Up Request',sending:'Sending...',sendingStatus:'Sending sign up request.',ok:'Sign up request sent. The SignalCare team will review it and reply by email.',fallback:'Email API is not configured yet. Please contact contact@signalcare.ltd.',failed:'Could not send sign up request.',unavailable:'Sign up request service is unavailable.',login:'Already have an account? Log In',home:'Back to Site'},
+  th:{dir:'ltr',title:'สมัครสมาชิก SignalCare',h:'สมัครสมาชิก',lead:'ขอบัญชีสำหรับเวอร์ชันเดโมบริการแบบชำระเงินของ SignalCare คำขอจะถูกส่งอีเมลถึงทีม SignalCare และอนุมัติหลังการตรวจสอบ',name:'ชื่อ',company:'บริษัท / องค์กร',email:'อีเมล',country:'ประเทศ',type:'ประเภทบัญชี',message:'รายละเอียดคำขอ',messagePh:'ระบุบัญชี ไซต์ โครงการนำร่อง หรือการติดตั้งที่ต้องการ',options:['บัญชีเดโมบริการแบบชำระเงิน','โครงการนำร่อง AI MRV','ปรึกษาองค์กร','สถาบันการเงิน','พันธมิตรเทคนิค'],submit:'ส่งคำขอสมัครสมาชิก',sending:'กำลังส่ง...',sendingStatus:'กำลังส่งคำขอสมัครสมาชิก',ok:'ส่งคำขอสมัครสมาชิกแล้ว ทีม SignalCare จะตรวจสอบและตอบกลับทางอีเมล',fallback:'ยังไม่ได้ตั้งค่า Email API กรุณาติดต่อ contact@signalcare.ltd',failed:'ไม่สามารถส่งคำขอสมัครสมาชิกได้',unavailable:'ไม่สามารถใช้บริการสมัครสมาชิกได้',login:'มีบัญชีแล้ว? เข้าสู่ระบบ',home:'กลับหน้าแรก'},
+  vi:{dir:'ltr',title:'Đăng ký SignalCare',h:'Đăng ký',lead:'Yêu cầu tạo tài khoản cho bản demo dịch vụ trả phí SignalCare. Yêu cầu sẽ được gửi email tới SignalCare và được phê duyệt sau khi xem xét.',name:'Tên',company:'Công ty / Tổ chức',email:'Email',country:'Quốc gia',type:'Loại tài khoản',message:'Nội dung yêu cầu',messagePh:'Cho biết tài khoản, cơ sở, pilot hoặc triển khai bạn cần.',options:['Tài khoản demo dịch vụ trả phí','Thí điểm AI MRV','Tư vấn doanh nghiệp','Tổ chức tài chính','Đối tác kỹ thuật'],submit:'Gửi yêu cầu đăng ký',sending:'Đang gửi...',sendingStatus:'Đang gửi yêu cầu đăng ký.',ok:'Yêu cầu đăng ký đã được gửi. Nhóm SignalCare sẽ xem xét và phản hồi qua email.',fallback:'Email API chưa được cấu hình. Vui lòng liên hệ contact@signalcare.ltd.',failed:'Không thể gửi yêu cầu đăng ký.',unavailable:'Dịch vụ đăng ký hiện không khả dụng.',login:'Đã có tài khoản? Đăng nhập',home:'Về trang chủ'},
+  id:{dir:'ltr',title:'Daftar SignalCare',h:'Daftar',lead:'Ajukan akun untuk demo layanan berbayar SignalCare. Permintaan dikirim ke SignalCare melalui email dan akses disetujui setelah ditinjau.',name:'Nama',company:'Perusahaan / Organisasi',email:'Email',country:'Negara',type:'Jenis Akun',message:'Detail Permintaan',messagePh:'Jelaskan akun, lokasi, pilot, atau implementasi yang Anda butuhkan.',options:['Akun Demo Layanan Berbayar','Pilot AI MRV','Konsultasi Enterprise','Lembaga Keuangan','Mitra Teknis'],submit:'Kirim Permintaan Daftar',sending:'Mengirim...',sendingStatus:'Mengirim permintaan pendaftaran.',ok:'Permintaan pendaftaran terkirim. Tim SignalCare akan meninjau dan membalas melalui email.',fallback:'Email API belum dikonfigurasi. Hubungi contact@signalcare.ltd.',failed:'Tidak dapat mengirim permintaan pendaftaran.',unavailable:'Layanan pendaftaran tidak tersedia.',login:'Sudah punya akun? Masuk',home:'Kembali ke situs'},
+  ar:{dir:'rtl',title:'إنشاء حساب SignalCare',h:'إنشاء حساب',lead:'اطلب حسابا لنسخة العرض للخدمة المدفوعة من SignalCare. سيتم إرسال الطلب إلى فريق SignalCare عبر البريد الإلكتروني والموافقة بعد المراجعة.',name:'الاسم',company:'الشركة / المؤسسة',email:'البريد الإلكتروني',country:'الدولة',type:'نوع الحساب',message:'تفاصيل الطلب',messagePh:'اكتب الحساب أو الموقع أو التجربة أو النشر الذي تحتاجه.',options:['حساب عرض للخدمة المدفوعة','تجربة AI MRV','استشارة مؤسسية','مؤسسة مالية','شريك تقني'],submit:'إرسال طلب إنشاء الحساب',sending:'جار الإرسال...',sendingStatus:'جار إرسال طلب إنشاء الحساب.',ok:'تم إرسال طلب إنشاء الحساب. سيقوم فريق SignalCare بالمراجعة والرد عبر البريد الإلكتروني.',fallback:'لم يتم إعداد Email API بعد. يرجى التواصل عبر contact@signalcare.ltd.',failed:'تعذر إرسال طلب إنشاء الحساب.',unavailable:'خدمة إنشاء الحساب غير متاحة.',login:'لديك حساب؟ تسجيل الدخول',home:'العودة إلى الموقع'},
+  zh:{dir:'ltr',title:'SignalCare 注册',h:'注册',lead:'申请 SignalCare 付费服务演示版账户。请求会通过邮件发送给 SignalCare，审核后开通访问。',name:'姓名',company:'公司 / 机构',email:'邮箱',country:'国家',type:'账户类型',message:'请求内容',messagePh:'请说明需要的账户、站点、试点或部署目的。',options:['付费服务演示版账户','AI MRV 试点','企业咨询','金融机构','技术合作伙伴'],submit:'提交注册请求',sending:'正在发送...',sendingStatus:'正在发送注册请求。',ok:'注册请求已发送。SignalCare 团队审核后会通过邮件回复。',fallback:'Email API 尚未配置。请联系 contact@signalcare.ltd。',failed:'无法发送注册请求。',unavailable:'注册请求服务不可用。',login:'已有账户？登录',home:'返回首页'},
+  ru:{dir:'ltr',title:'Регистрация SignalCare',h:'Регистрация',lead:'Запросите учетную запись для платной демо-версии SignalCare. Запрос будет отправлен в SignalCare по email, доступ будет одобрен после проверки.',name:'Имя',company:'Компания / Организация',email:'Эл. почта',country:'Страна',type:'Тип аккаунта',message:'Детали запроса',messagePh:'Укажите нужный аккаунт, объект, пилот или цель внедрения.',options:['Аккаунт платной демо-версии','Пилот AI MRV','Корпоративная консультация','Финансовый институт','Технический партнер'],submit:'Отправить заявку',sending:'Отправка...',sendingStatus:'Отправляем заявку на регистрацию.',ok:'Заявка отправлена. Команда SignalCare проверит ее и ответит по email.',fallback:'Email API еще не настроен. Напишите на contact@signalcare.ltd.',failed:'Не удалось отправить заявку.',unavailable:'Сервис регистрации недоступен.',login:'Уже есть аккаунт? Войти',home:'На главную'}
+};
+const $=id=>document.getElementById(id);
+const form=$('signupForm'),statusEl=$('status'),btn=$('submitBtn'),langSelect=$('langSelect');
+let lang='ko';
+function pickLang(){try{return localStorage.getItem('sc_lang')||navigator.language.slice(0,2)||'ko'}catch(e){return 'ko'}}
+function applyLang(code){
+  lang=T[code]?code:'ko';
+  const t=T[lang];
+  document.documentElement.lang=lang;document.documentElement.dir=t.dir;document.title=t.title;
+  langSelect.value=lang;$('titleText').textContent=t.h;$('leadText').textContent=t.lead;
+  $('nameLabel').textContent=t.name;$('companyLabel').textContent=t.company;$('emailLabel').textContent=t.email;$('countryLabel').textContent=t.country;$('typeLabel').textContent=t.type;$('messageLabel').textContent=t.message;
+  $('message').placeholder=t.messagePh;btn.textContent=t.submit;$('loginLink').textContent=t.login;$('homeLink').textContent=t.home;
+  $('type').innerHTML=t.options.map(v=>'<option>'+v+'</option>').join('');
+  try{localStorage.setItem('sc_lang',lang)}catch(e){}
+}
+langSelect.addEventListener('change',()=>applyLang(langSelect.value));
+applyLang(pickLang());
+form.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  const t=T[lang],data=Object.fromEntries(new FormData(form).entries());
+  btn.disabled=true;btn.textContent=t.sending;statusEl.textContent=t.sendingStatus;statusEl.className='status';
+  try{
+    const res=await fetch('/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const json=await res.json().catch(()=>({}));
+    if(res.ok&&json.ok){form.reset();applyLang(lang);statusEl.textContent=t.ok;statusEl.className='status ok';return;}
+    if(json.fallback==='mailto'){statusEl.textContent=t.fallback;statusEl.className='status err';return;}
+    statusEl.textContent=json.error||t.failed;statusEl.className='status err';
+  }catch(err){statusEl.textContent=t.unavailable;statusEl.className='status err';}
+  finally{btn.disabled=false;btn.textContent=T[lang].submit;}
+});
+</script>
+</body>
+</html>
