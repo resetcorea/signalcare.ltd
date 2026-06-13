@@ -6,11 +6,7 @@
     { "source": "/signup", "destination": "/signup.html" },
     { "source": "/dashboard", "destination": "/dashboard/index.html" },
     { "source": "/dashboard/:path*", "destination": "/dashboard/index.html" },
-    { "source": "/api/health", "destination": "/api/health.js" },
-    { "source": "/api/login", "destination": "/api/login.js" },
-    { "source": "/api/logout", "destination": "/api/logout.js" },
-    { "source": "/api/send-email", "destination": "/api/send-email.js" },
-    { "source": "/:path*", "destination": "/index.html" }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
