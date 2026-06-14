@@ -1,1 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SignalCare 로그인</title>
+<style>
+:root{--bg:#04040a;--s1:#09090f;--s2:#0e0e18;--t1:#eeeeff;--t2:#8d8dbd;--ac:#c2ff47;--rd:#ff4d6e;--b1:#14143a;--fn:-apple-system,BlinkMacSystemFont,"Pretendard",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 18% 0%,rgba(194,255,71,.1),transparent 34%),radial-gradient(circle at 90% 100%,rgba(0,204,255,.08),transparent 34%),var(--bg);color:var(--t1);font-family:var(--fn);padding:24px}
+.box{width:min(470px,100%);background:rgba(9,9,15,.96);border:1px solid var(--b1);border-radius:16px;padding:30px;box-shadow:0 24px 80px rgba(0,0,0,.45)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:10px}.mark{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--ac),#00ccff);display:grid;place-items:center;color:#000;font-weight:900}.name{font-weight:900;letter-spacing:.02em}.name em{color:var(--ac);font-style:normal}
+.lang{border:1px solid var(--b1);background:var(--s2);color:var(--t1);border-radius:10px;padding:10px 12px;font:800 14px var(--fn);outline:none}
+h1{font-size:34px;margin:0 0 10px;letter-spacing:0;line-height:1.15}p{color:var(--t2);margin:0 0 24px;line-height:1.7;font-size:16px}
+label{display:block;color:var(--t1);font-size:16px;font-weight:850;margin:16px 0 8px}
+input{width:100%;border:1px solid var(--b1);background:var(--s2);border-radius:10px;color:var(--t1);font:600 17px var(--fn);padding:15px;outline:none}
+input::placeholder{color:#5f5f8e}input:focus{border-color:rgba(194,255,71,.6);box-shadow:0 0 0 3px rgba(194,255,71,.08)}
+button,.link{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:10px;padding:14px 18px;font-weight:900;text-decoration:none;cursor:pointer}
+button{width:100%;margin-top:20px;background:var(--ac);color:#000;font-size:18px}.link{color:var(--t1);border:1px solid var(--b1);margin-top:10px;width:100%;font-size:16px;background:rgba(255,255,255,.02)}
+.status{min-height:22px;margin-top:13px;font-weight:750;font-size:14px;color:var(--t2);line-height:1.5}.status.err{color:var(--rd)}
+html[dir="rtl"] body{text-align:right}html[dir="rtl"] .top,html[dir="rtl"] .brand{flex-direction:row-reverse}
+@media(max-width:520px){body{padding:16px}.box{padding:22px}.top{align-items:flex-start;flex-direction:column}h1{font-size:30px}}
+</style>
+</head>
+<body>
+<main class="box">
+  <div class="top">
+    <div class="brand"><div class="mark">S</div><div class="name">SIGNAL<em>CARE</em>.ltd</div></div>
+    <select class="lang" id="langSelect" aria-label="Language">
+      <option value="ko">한국어</option>
+      <option value="en">English</option>
+      <option value="th">ภาษาไทย</option>
+      <option value="vi">Tiếng Việt</option>
+      <option value="id">Bahasa Indonesia</option>
+      <option value="ar">العربية</option>
+      <option value="zh">中文</option>
+      <option value="ru">Русский</option>
+    </select>
+  </div>
+  <h1 id="titleText">로그인</h1>
+  <p id="leadText">승인된 SignalCare 계정으로 유료서비스 데모버전과 시스템 상태 화면에 접속합니다.</p>
+  <form id="loginForm">
+    <label for="email" id="emailLabel">이메일</label>
+    <input id="email" name="email" type="email" autocomplete="email" required placeholder="이메일">
+    <label for="password" id="passwordLabel">비밀번호</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="비밀번호">
+    <button type="submit" id="submitBtn">로그인</button>
+    <div class="status" id="status"></div>
+  </form>
+  <a class="link" id="signupLink" href="/signup">회원가입</a>
+  <a class="link" id="homeLink" href="/">홈으로</a>
+</main>
+<script>
+const T={
+  ko:{dir:'ltr',title:'SignalCare 로그인',h:'로그인',lead:'승인된 SignalCare 계정으로 유료서비스 데모버전과 시스템 상태 화면에 접속합니다.',email:'이메일',password:'비밀번호',emailPh:'이메일',passwordPh:'비밀번호',submit:'로그인',checking:'확인 중...',checkingStatus:'계정 정보를 확인하고 있습니다.',failed:'로그인에 실패했습니다.',unavailable:'로그인 서비스를 사용할 수 없습니다.',signup:'회원가입',home:'홈으로'},
+  en:{dir:'ltr',title:'SignalCare Login',h:'Log In',lead:'Access the paid service demo and system status screen with an approved SignalCare account.',email:'Email',password:'Password',emailPh:'Email',passwordPh:'Password',submit:'Log In',checking:'Checking...',checkingStatus:'Checking credentials.',failed:'Login failed.',unavailable:'Login service is unavailable.',signup:'Sign Up',home:'Back to Site'},
+  th:{dir:'ltr',title:'เข้าสู่ระบบ SignalCare',h:'เข้าสู่ระบบ',lead:'เข้าสู่เวอร์ชันเดโมบริการแบบชำระเงินและหน้าสถานะระบบด้วยบัญชี SignalCare ที่ได้รับอนุมัติ',email:'อีเมล',password:'รหัสผ่าน',emailPh:'อีเมล',passwordPh:'รหัสผ่าน',submit:'เข้าสู่ระบบ',checking:'กำลังตรวจสอบ...',checkingStatus:'กำลังตรวจสอบข้อมูลบัญชี',failed:'เข้าสู่ระบบไม่สำเร็จ',unavailable:'ไม่สามารถใช้บริการเข้าสู่ระบบได้',signup:'สมัครสมาชิก',home:'กลับหน้าแรก'},
+  vi:{dir:'ltr',title:'Đăng nhập SignalCare',h:'Đăng nhập',lead:'Truy cập bản demo dịch vụ trả phí và màn hình trạng thái hệ thống bằng tài khoản SignalCare đã được phê duyệt.',email:'Email',password:'Mật khẩu',emailPh:'Email',passwordPh:'Mật khẩu',submit:'Đăng nhập',checking:'Đang kiểm tra...',checkingStatus:'Đang kiểm tra thông tin tài khoản.',failed:'Đăng nhập không thành công.',unavailable:'Dịch vụ đăng nhập hiện không khả dụng.',signup:'Đăng ký',home:'Về trang chủ'},
+  id:{dir:'ltr',title:'Masuk SignalCare',h:'Masuk',lead:'Akses demo layanan berbayar dan layar status sistem dengan akun SignalCare yang disetujui.',email:'Email',password:'Kata sandi',emailPh:'Email',passwordPh:'Kata sandi',submit:'Masuk',checking:'Memeriksa...',checkingStatus:'Memeriksa kredensial akun.',failed:'Login gagal.',unavailable:'Layanan login tidak tersedia.',signup:'Daftar',home:'Kembali ke situs'},
+  ar:{dir:'rtl',title:'تسجيل الدخول إلى SignalCare',h:'تسجيل الدخول',lead:'ادخل إلى نسخة العرض للخدمة المدفوعة وشاشة حالة النظام باستخدام حساب SignalCare معتمد.',email:'البريد الإلكتروني',password:'كلمة المرور',emailPh:'البريد الإلكتروني',passwordPh:'كلمة المرور',submit:'تسجيل الدخول',checking:'جار التحقق...',checkingStatus:'جار التحقق من بيانات الحساب.',failed:'فشل تسجيل الدخول.',unavailable:'خدمة تسجيل الدخول غير متاحة.',signup:'إنشاء حساب',home:'العودة إلى الموقع'},
+  zh:{dir:'ltr',title:'SignalCare 登录',h:'登录',lead:'使用已批准的 SignalCare 账户进入付费服务演示版和系统状态页面。',email:'邮箱',password:'密码',emailPh:'邮箱',passwordPh:'密码',submit:'登录',checking:'正在检查...',checkingStatus:'正在检查账户信息。',failed:'登录失败。',unavailable:'登录服务不可用。',signup:'注册',home:'返回首页'},
+  ru:{dir:'ltr',title:'Вход SignalCare',h:'Войти',lead:'Войдите в платную демо-версию сервиса и экран статуса системы с утвержденной учетной записью SignalCare.',email:'Эл. почта',password:'Пароль',emailPh:'Эл. почта',passwordPh:'Пароль',submit:'Войти',checking:'Проверка...',checkingStatus:'Проверяем данные учетной записи.',failed:'Не удалось войти.',unavailable:'Сервис входа недоступен.',signup:'Регистрация',home:'На главную'}
+};
+const $=id=>document.getElementById(id);
+const form=$('loginForm'),statusEl=$('status'),btn=$('submitBtn'),langSelect=$('langSelect');
+let lang='ko';
+function pickLang(){try{return localStorage.getItem('sc_lang')||navigator.language.slice(0,2)||'ko'}catch(e){return 'ko'}}
+function applyLang(code){
+  lang=T[code]?code:'ko';
+  const t=T[lang];
+  document.documentElement.lang=lang;document.documentElement.dir=t.dir;document.title=t.title;
+  langSelect.value=lang;$('titleText').textContent=t.h;$('leadText').textContent=t.lead;
+  $('emailLabel').textContent=t.email;$('passwordLabel').textContent=t.password;
+  $('email').placeholder=t.emailPh;$('password').placeholder=t.passwordPh;btn.textContent=t.submit;
+  $('signupLink').textContent=t.signup;$('homeLink').textContent=t.home;
+  try{localStorage.setItem('sc_lang',lang)}catch(e){}
+}
+langSelect.addEventListener('change',()=>applyLang(langSelect.value));
+applyLang(pickLang());
+form.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  const t=T[lang],data=Object.fromEntries(new FormData(form).entries());
+  btn.disabled=true;btn.textContent=t.checking;statusEl.textContent=t.checkingStatus;statusEl.className='status';
+  try{
+    const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const json=await res.json().catch(()=>({}));
+    if(res.ok&&json.ok){location.href='/dashboard';return;}
+    statusEl.textContent=json.error||t.failed;statusEl.className='status err';
+  }catch(err){statusEl.textContent=t.unavailable;statusEl.className='status err';}
+  finally{btn.disabled=false;btn.textContent=T[lang].submit;}
+});
+</script>
+</body>
+</html>
 
