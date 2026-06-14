@@ -1,1 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SignalCare — Paid Service Demo Version</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─── */
+:root{
+  --bg:#03040a;--s0:#060810;--s1:#0a0c18;--s2:#0f1122;--s3:#14162c;--s4:#1a1d38;
+  --t1:#eef0ff;--t2:#6e72a8;--t3:#32365a;--t4:#1e2040;
+  --ac:#c6f135;--ac2:rgba(198,241,53,.09);--ac3:rgba(198,241,53,.22);
+  --cy:#00d0ff;--cy2:rgba(0,208,255,.09);
+  --vi:#9b7dff;--vi2:rgba(155,125,255,.09);
+  --gd:#f0c040;--gd2:rgba(240,192,64,.09);
+  --rd:#ff4560;--rd2:rgba(255,69,96,.09);
+  --gn:#2ecc71;--gn2:rgba(46,204,113,.09);
+  --b1:#181c38;--b2:#22274a;--b3:#2e3460;
+  --sw:244px;--swm:56px;--th:52px;
+  --fs:"Pretendard Variable","Pretendard",-apple-system,sans-serif;
+  --fm:"JetBrains Mono","SF Mono",monospace;
+  --ez:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+html{color-scheme:dark;font-size:13px}
+body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh;overflow-x:hidden}
+::selection{background:var(--ac2);color:var(--ac)}
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+button,select{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit;outline:none}
 
+/* atmospheric */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 50% at 15% 0%,rgba(198,241,53,.04),transparent 60%),
+             radial-gradient(ellipse 50% 40% at 85% 100%,rgba(0,208,255,.03),transparent 60%)}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--b1) 1px,transparent 1px),linear-gradient(90deg,var(--b1) 1px,transparent 1px);
+  background-size:52px 52px;opacity:.28}
+
+/* ─── SHELL ─── */
+.shell{position:relative;z-index:1;display:flex;min-height:100vh}
+
+/* ─── SIDEBAR ─── */
+.sidebar{width:var(--sw);flex-shrink:0;background:rgba(6,8,16,.96);border-right:1px solid var(--b1);
+  display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;
+  backdrop-filter:blur(28px);z-index:60;transition:width .28s var(--ez);overflow:hidden}
+.sidebar.mini{width:var(--swm)}
+.sidebar.mini .sb-lbl,.sidebar.mini .brand-name,.sidebar.mini .brand-tag,
+.sidebar.mini .sb-sec,.sidebar.mini .nb,.sidebar.mini .sf-txt{display:none!important}
+
+.brand{display:flex;align-items:center;gap:11px;padding:18px 14px 16px;border-bottom:1px solid var(--b1);flex-shrink:0;position:relative}
+.brand-mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--ac),var(--cy));
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#000;
+  flex-shrink:0;box-shadow:0 0 20px rgba(198,241,53,.2)}
+.brand-name{font-size:13px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.brand-name em{color:var(--ac);font-style:normal}
+.brand-tag{font-size:7.5px;color:var(--t3);font-family:var(--fm);letter-spacing:.07em;text-transform:uppercase;margin-top:1px}
+.sb-tog{position:absolute;right:-14px;top:50%;transform:translateY(-50%);width:28px;height:28px;
+  border-radius:50%;background:var(--s2);border:1px solid var(--b2);
+  display:flex;align-items:center;justify-content:center;color:var(--t2);font-size:10px;cursor:pointer;transition:all .18s}
+.sb-tog:hover{color:var(--t1);background:var(--b2)}
+
+.nav-wrap{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 0 10px}
+.nav-wrap::-webkit-scrollbar{display:none}
+.sb-sec{font-size:7.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--t3);padding:14px 16px 4px;font-family:var(--fm);white-space:nowrap}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 14px;margin:1px 6px;border-radius:9px;
+  font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;transition:all .16s;
+  white-space:nowrap;user-select:none;position:relative}
+.ni:hover{background:var(--s3);color:var(--t1)}
+.ni.on{background:var(--ac2);color:var(--ac);font-weight:700;border:1px solid var(--ac3)}
+.ni.on::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--ac);border-radius:0 3px 3px 0}
+.ni-ico{font-size:15px;flex-shrink:0;width:18px;text-align:center}
+.sb-lbl{flex:1;overflow:hidden;text-overflow:ellipsis}
+.nb{font-size:7.5px;font-weight:700;font-family:var(--fm);padding:2px 6px;border-radius:6px;flex-shrink:0;letter-spacing:.04em}
+.nb-ac{background:var(--ac2);color:var(--ac)}.nb-gn{background:var(--gn2);color:var(--gn)}
+.nb-vi{background:var(--vi2);color:var(--vi)}.nb-rd{background:var(--rd2);color:var(--rd)}
+
+.sf{border-top:1px solid var(--b1);padding:10px 8px;flex-shrink:0}
+.sf-live{display:flex;align-items:center;gap:6px;padding:5px 8px;font-size:9px;color:var(--t2);font-family:var(--fm)}
+.sf-live::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--ac);flex-shrink:0;animation:lp 2s ease-in-out infinite}
+.sf-sys{display:flex;align-items:center;gap:6px;padding:5px 8px;font-size:9px;color:var(--t3);font-family:var(--fm)}
+.sf-sys::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gn);flex-shrink:0;animation:lp 3s ease-in-out infinite}
+
+/* ─── MAIN ─── */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left .28s var(--ez)}
+.main.wide{margin-left:var(--swm)}
+
+.topbar{height:var(--th);display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+  border-bottom:1px solid var(--b1);background:rgba(3,4,10,.88);backdrop-filter:blur(24px);
+  position:sticky;top:0;z-index:50;flex-shrink:0;gap:12px}
+.tb-l{display:flex;align-items:center;gap:14px;min-width:0}
+.tb-pg{font-size:14px;font-weight:700;letter-spacing:-.015em;white-space:nowrap}
+.tb-bc{font-size:9px;font-family:var(--fm);color:var(--t3)}
+.tb-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.tb-hash{font-family:var(--fm);font-size:9px;color:rgba(198,241,53,.35);white-space:nowrap}
+.tb-sel{font-family:var(--fm);font-size:10px;font-weight:600;padding:5px 10px;border-radius:7px;background:var(--s2);border:1px solid var(--b2);color:var(--ac)}
+.tb-cur{padding:5px 10px;border-radius:7px;background:var(--s2);border:1px solid var(--b2);font-family:var(--fm);font-size:10px;color:var(--t1)}
+.tb-btn{display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid var(--b2);color:var(--t2);transition:all .16s;white-space:nowrap}
+.tb-btn:hover{background:var(--s2);color:var(--t1)}
+.tb-btn.pri{background:var(--ac);color:#000;border-color:transparent;box-shadow:0 0 22px rgba(198,241,53,.18)}
+.tb-btn.pri:hover{background:rgba(198,241,53,.88)}
+
+.cnt{padding:22px 24px 52px;flex:1}
+
+/* ─── COMPONENTS ─── */
+/* kpi */
+.krow{display:grid;gap:12px;margin-bottom:16px}
+.k6{grid-template-columns:repeat(6,1fr)}.k4{grid-template-columns:repeat(4,1fr)}.k3{grid-template-columns:repeat(3,1fr)}
+.kc{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:14px 16px;transition:border-color .2s,transform .18s}
+.kc:hover{border-color:var(--b2);transform:translateY(-1px)}
+.kc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.kc-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--t2);font-family:var(--fm)}
+.kc-ico{font-size:14px;opacity:.65}
+.kc-num{font-size:clamp(18px,2vw,26px);font-weight:700;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.kc-sub{font-size:9px;color:var(--t2);margin-top:5px}
+.up{color:var(--gn)}.dn{color:var(--rd)}.nu{color:var(--cy)}
+
+/* card */
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;overflow:hidden;transition:border-color .2s}
+.card:hover{border-color:var(--b2)}
+.ch{display:flex;align-items:flex-start;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--b1);gap:10px}
+.ct{font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px}
+.cs{font-size:9px;color:var(--t2);margin-top:3px;font-family:var(--fm)}
+.cb{padding:16px 18px}.cb0{/* no-pad */}
+
+/* badge — unified system */
+.bd{display:inline-flex;align-items:center;gap:4px;font-size:8px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.07em;padding:2px 8px;border-radius:5px;
+  font-family:var(--fm);flex-shrink:0;white-space:nowrap}
+.bd.dot::before{content:'';display:block;width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;animation:lp 2s ease-in-out infinite}
+.bd-ac{background:var(--ac2);color:var(--ac)}.bd-gn{background:var(--gn2);color:var(--gn)}
+.bd-rd{background:var(--rd2);color:var(--rd)}.bd-cy{background:var(--cy2);color:var(--cy)}
+.bd-vi{background:var(--vi2);color:var(--vi)}.bd-gd{background:var(--gd2);color:var(--gd)}
+
+/* grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
+.g12{display:grid;grid-template-columns:1fr 2fr;gap:14px;margin-bottom:14px}
+.gf{margin-bottom:14px}
+
+/* table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--t2);font-family:var(--fm);padding:9px 14px;text-align:left;border-bottom:1px solid var(--b1)}
+.tbl td{padding:10px 14px;font-size:11px;border-bottom:1px solid rgba(24,28,56,.6);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,.015)}
+.mono{font-family:var(--fm)}
+.hcell{font-family:var(--fm);font-size:8.5px;color:rgba(198,241,53,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+
+/* progress */
+.pg{height:4px;background:var(--b1);border-radius:2px;overflow:hidden}
+.pg5{height:5px}.pg7{height:7px}
+.pf{height:100%;border-radius:2px;transition:width 1.5s var(--ez)}
+
+/* stat row */
+.sr{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(24,28,56,.5);font-size:11px}
+.sr:last-child{border-bottom:none}
+.sr-l{color:var(--t2)}.sr-v{font-weight:700;font-family:var(--fm)}
+
+/* chart */
+.cw{position:relative;width:100%}
+.cw svg{width:100%;overflow:visible}
+.gl{stroke:var(--b1);stroke-width:1}
+.cl-ac{stroke:var(--ac);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cl-cy{stroke:var(--cy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cl-vi{stroke:var(--vi);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ca-ac{fill:rgba(198,241,53,.07)}.ca-cy{fill:rgba(0,208,255,.05)}
+.ax{fill:var(--t2);font-size:9px;font-family:var(--fs);font-weight:600}
+
+/* hash stream */
+.hs{display:flex;flex-direction:column;gap:1px;overflow:hidden}
+.hr{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid rgba(24,28,56,.4);animation:si .3s var(--ez)}
+.hts{font-family:var(--fm);font-size:8px;color:var(--cy);width:62px;flex-shrink:0}
+.hv{font-family:var(--fm);font-size:8px;color:rgba(198,241,53,.32);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hn{font-family:var(--fm);font-size:7px;font-weight:700;background:var(--ac2);color:var(--ac);padding:1px 5px;border-radius:3px;flex-shrink:0}
+
+/* security checks */
+.sci{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(24,28,56,.45)}
+.sci:last-child{border-bottom:none}
+.sci-l{display:flex;align-items:center;gap:8px;font-size:11px}
+.st{font-size:8px;font-weight:700;font-family:var(--fm);padding:2px 7px;border-radius:4px;letter-spacing:.06em}
+.pass{background:var(--gn2);color:var(--gn)}.warn{background:var(--gd2);color:var(--gd)}.fail{background:var(--rd2);color:var(--rd)}
+
+/* region card */
+.rc{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:14px;
+  position:relative;overflow:hidden;transition:border-color .2s,transform .2s;cursor:pointer}
+.rc:hover{border-color:var(--b2);transform:translateY(-2px)}
+.rc-bar{position:absolute;top:0;left:0;right:0;height:3px}
+
+/* billing formula */
+.fbox{background:linear-gradient(135deg,rgba(198,241,53,.05),rgba(0,208,255,.04));
+  border:1px solid var(--ac3);border-radius:14px;padding:20px 24px;text-align:center;margin-bottom:16px}
+.ftxt{font-size:14px;color:rgba(180,210,180,.7);font-family:var(--fm);line-height:2.1}
+.ftxt .hl{color:var(--ac);font-weight:700;font-size:16px}.ftxt .sp{color:var(--t3);padding:0 8px}
+
+/* plan card */
+.pc{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:20px;transition:border-color .2s,transform .2s}
+.pc:hover{transform:translateY(-2px)}
+.pc.feat{border-color:var(--ac);box-shadow:0 0 28px rgba(198,241,53,.07)}
+.pc-top{background:var(--ac);color:#000;font-size:8px;font-weight:700;letter-spacing:.08em;
+  text-align:center;padding:3px;margin:-20px -20px 16px;border-radius:14px 14px 0 0}
+.pc-name{font-size:18px;font-weight:800;margin-bottom:4px}
+.pc-type{font-size:11px;color:var(--t2);font-family:var(--fm);margin-bottom:12px;line-height:1.5}
+.pc-price{font-size:26px;font-weight:800;font-family:var(--fm);margin-bottom:4px;letter-spacing:-.02em}
+.pc-per{font-size:12px;color:var(--t2);font-weight:700;margin-bottom:14px}
+.pc-feat{font-size:11.5px;color:rgba(238,240,255,.74);line-height:1.9}
+.pc-cta{display:flex;align-items:center;justify-content:center;margin-top:18px;padding:11px 14px;border-radius:10px;background:var(--ac);color:#000;text-decoration:none;font-size:12px;font-weight:900}
+.pc-cta.alt{background:transparent;color:var(--cy);border:1px solid var(--cy)}
+
+/* revenue bar */
+.rvb{height:32px;border-radius:8px;overflow:hidden;display:flex;margin-bottom:10px}
+.rvs{display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;font-family:var(--fm);letter-spacing:.02em;transition:width 1.2s var(--ez)}
+
+/* mini stat */
+.ms{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:9px 11px}
+.ms-l{font-size:7.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--t2);font-family:var(--fm);margin-bottom:3px}
+.ms-v{font-size:13px;font-weight:700;font-family:var(--fm)}
+
+/* alert box */
+.abox{border-radius:9px;padding:11px 13px;font-size:10px;margin-bottom:8px}
+.abox:last-child{margin-bottom:0}
+.abox h4{font-weight:700;margin-bottom:3px}
+.abox p{color:var(--t2);line-height:1.55}
+
+/* ─── ANIMATIONS ─── */
+@keyframes lp{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes si{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+@keyframes dp{from{stroke-dashoffset:700}to{stroke-dashoffset:0}}
+@keyframes ci{from{opacity:0;transform:scale(.95) translateY(4px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes mp{0%,100%{r:5;opacity:.9}50%{r:10;opacity:.3}}
+@keyframes sc{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+
+.fu{animation:fu .44s var(--ez) both}
+.d0{animation-delay:0s}.d1{animation-delay:.07s}.d2{animation-delay:.14s}
+.d3{animation-delay:.21s}.d4{animation-delay:.28s}.d5{animation-delay:.35s}
+.dac{stroke-dasharray:700;stroke-dashoffset:700;animation:dp 2s var(--ez) .4s forwards}
+.dcy{stroke-dasharray:700;stroke-dashoffset:700;animation:dp 2.3s var(--ez) .7s forwards}
+.dvi{stroke-dasharray:700;stroke-dashoffset:700;animation:dp 2.5s var(--ez) .9s forwards}
+.scan{position:fixed;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(198,241,53,.15),transparent);animation:sc 10s linear infinite;pointer-events:none;z-index:999}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1280px){.k6{grid-template-columns:repeat(3,1fr)}.g3{grid-template-columns:1fr 1fr}}
+@media(max-width:960px){.k4{grid-template-columns:repeat(2,1fr)}.g2,.g21,.g12{grid-template-columns:1fr}}
+@media(max-width:768px){.sidebar{width:var(--swm)}.sidebar .sb-lbl,.sidebar .brand-name,.sidebar .brand-tag,.sidebar .sb-sec,.sidebar .nb,.sidebar .sf-txt{display:none!important}.main{margin-left:var(--swm)!important}}
+
+.afu{animation:fu .45s var(--ez) both}
+
+/* ── RTL (Arabic) ── */
+[dir="rtl"] .sb { left: auto; right: 0; border-right: none; border-left: 1px solid var(--b1); }
+[dir="rtl"] .main { margin-left: 0; margin-right: var(--sw); }
+[dir="rtl"] .main.expanded { margin-left: 0; margin-right: 54px; }
+[dir="rtl"] .topbar { direction: rtl; }
+[dir="rtl"] .tb-left { flex-direction: row-reverse; }
+[dir="rtl"] .tb-right { flex-direction: row-reverse; }
+[dir="rtl"] .cnt { direction: rtl; }
+[dir="rtl"] .krow { direction: rtl; }
+[dir="rtl"] .g2, [dir="rtl"] .g3, [dir="rtl"] .g21, [dir="rtl"] .g12 { direction: rtl; }
+[dir="rtl"] .card-head { flex-direction: row-reverse; }
+[dir="rtl"] .card-title { flex-direction: row-reverse; }
+[dir="rtl"] .ni { flex-direction: row-reverse; }
+[dir="rtl"] .ni-ico { margin-left: 0; margin-right: 0; }
+[dir="rtl"] .nb { margin-left: 0; margin-right: auto; }
+[dir="rtl"] .tbl th, [dir="rtl"] .tbl td { text-align: right; }
+[dir="rtl"] .collapse-btn { right: auto; left: -14px; }
+[dir="rtl"] .sb-brand { flex-direction: row-reverse; }
+</style>
+</head>
+<body>
+<div class="scan"></div>
+
+<!-- ══════════════════════════════════════════
+  ALL DATA, i18n, NAV — single unified script
+══════════════════════════════════════════ -->
+<script>
+/* ─── i18n: 7 languages, consistent "t" key ─── */
+const LANG={
+en:{dir:"ltr",nav:{dashboard:"Paid Service Demo Version",farms:"Farm Management",evidence:"Evidence Packs",compliance:"Compliance",asset:"Carbon Assets",settlement:"Settlement",reports:"Reports",carbonMap:"National Carbon Map",billing:"Billing",auditLogs:"Audit Logs",security:"Security Center",tenantRegions:"Tenant Regions",revenueShare:"Revenue Share",settings:"Settings"},
+  pg:{dashboard:{t:"Paid Service Demo Version",s:"Enterprise Carbon Asset OS demo · Real-time · SHA-256 Sealed"},carbonMap:{t:"National Carbon Map",s:"Country-level reduction · Live farm nodes · Government & Public view"},billing:{t:"Carbon-Based Billing",s:"고객이 수익을 얻을 때만 플랫폼도 함께 수익을 얻는 구조"},auditLogs:{t:"Evidence-Linked Audit Log",s:"All activity sealed — ISO 27001 · GDPR · SOC 2 compliant"},security:{t:"Security & Compliance Audit · P0.5",s:"Tenant isolation · AES-256 · DLP · RBAC verification"},tenantRegions:{t:"Data Sovereign Mesh",s:"국가별 데이터 현지 저장 · 본사 통합 관리 · 데이터 주권 보장"},revenueShare:{t:"Revenue Share · 50 / 30 / 20",s:"Carbon credit revenue automatically distributed"},farms:{t:"Farm Management"},evidence:{t:"Evidence Packs"},compliance:{t:"Compliance"},asset:{t:"Carbon Assets"},settlement:{t:"Settlement"},reports:{t:"Reports"},settings:{t:"Settings"}},
+  c:{live:"LIVE",opn:"OP: NORMAL",sov:"Data Sovereign",av:"Asset Value",ve:"Verified Emissions",fs:"Feed Savings",hs:"Hash / sec",tr:"Trust Score",la:"Latency",lg:"Language",cu:"Currency",sy:"System",gp:"GENERATE PDF [↓]",gpi:"Generating…",gpd:"✓ PDF Ready",sd:"SEALED DATA",vn:"Valid Node",cf:"CONFIRMED",py:"PEAK YIELD",rs:"Revenue Share",bv:"Blockchain Ver",eh:"Evidence Pack Hash (SHA-256)",wa:"Warning",p2:"2 Pending Settlement Signatures",fm:"Farm",si:"Signal",navCore:"CORE PLATFORM",navEnt:"ENTERPRISE",navSys:"SYSTEM"}},
+ko:{dir:"ltr",nav:{dashboard:"유료서비스 데모버전",farms:"농장 관리",evidence:"증거 팩",compliance:"규정 준수",asset:"탄소 자산",settlement:"정산",reports:"보고서",carbonMap:"국가 탄소 맵",billing:"빌링",auditLogs:"감사 로그",security:"보안 센터",tenantRegions:"테넌트 지역",revenueShare:"수익 배분",settings:"설정"},
+  pg:{dashboard:{t:"유료서비스 데모버전",s:"엔터프라이즈 Carbon Asset OS 데모 · 실시간 · SHA-256 봉인"},carbonMap:{t:"국가 탄소 맵",s:"국가 단위 탄소 감축 현황 · 실시간 농장 노드 · 정부 화면"},billing:{t:"탄소 기반 빌링",s:"고객이 수익을 얻을 때만 플랫폼도 함께 수익을 얻는 구조"},auditLogs:{t:"증거 연계 감사 로그",s:"모든 활동이 SHA-256으로 봉인 — 국제 감사 대응 완비"},security:{t:"보안 및 규정 준수 감사 · P0.5",s:"테넌트 격리 · AES-256 암호화 · DLP · RBAC 검증"},tenantRegions:{t:"데이터 주권 메시",s:"국가별 데이터 현지 저장 · 본사 통합 관리 · 데이터 주권 보장"},revenueShare:{t:"수익 배분 · 50 / 30 / 20",s:"탄소 크레딧 수익 자동 분배"},farms:{t:"농장 관리"},evidence:{t:"증거 팩"},compliance:{t:"규정 준수"},asset:{t:"탄소 자산"},settlement:{t:"정산"},reports:{t:"보고서"},settings:{t:"설정"}},
+  c:{live:"실시간",opn:"운영: 정상",sov:"데이터 주권",av:"탄소 자산 가치",ve:"검증된 감축량",fs:"사료 절감",hs:"해시 / 초",tr:"신뢰 점수",la:"지연",lg:"언어",cu:"통화",sy:"시스템",gp:"PDF 생성 [↓]",gpi:"생성 중…",gpd:"✓ PDF 완료",sd:"봉인된 데이터",vn:"유효 노드",cf:"확인됨",py:"최고 수율",rs:"수익 배분",bv:"블록체인 검증",eh:"증거 팩 해시 (SHA-256)",wa:"경고",p2:"정산 서명 2건 대기 중",fm:"농장",si:"시그널",navCore:"핵심 플랫폼",navEnt:"엔터프라이즈",navSys:"시스템"}},
+th:{dir:"ltr",nav:{dashboard:"เวอร์ชันเดโมบริการแบบชำระเงิน",farms:"ฟาร์ม",evidence:"หลักฐาน",compliance:"การปฏิบัติตาม",asset:"สินทรัพย์คาร์บอน",settlement:"การชำระ",reports:"รายงาน",carbonMap:"แผนที่คาร์บอน",billing:"การเรียกเก็บเงิน",auditLogs:"บันทึกตรวจสอบ",security:"ศูนย์ความปลอดภัย",tenantRegions:"ภูมิภาคผู้เช่า",revenueShare:"การแบ่งรายได้",settings:"การตั้งค่า"},
+  pg:{dashboard:{t:"เวอร์ชันเดโมบริการแบบชำระเงิน",s:"เดโม Enterprise Carbon Asset OS · เรียลไทม์ · SHA-256"},carbonMap:{t:"แผนที่คาร์บอนแห่งชาติ",s:"การลดคาร์บอนระดับประเทศ"},billing:{t:"การเรียกเก็บเงินตามคาร์บอน",s:""},auditLogs:{t:"บันทึกตรวจสอบหลักฐาน",s:""},security:{t:"การตรวจสอบความปลอดภัย P0.5",s:""},tenantRegions:{t:"ข้อมูลอธิปไตย Mesh",s:""},revenueShare:{t:"การแบ่งรายได้ 50/30/20",s:""},farms:{t:"ฟาร์ม"},evidence:{t:"หลักฐาน"},compliance:{t:"การปฏิบัติตาม"},asset:{t:"สินทรัพย์"},settlement:{t:"การชำระ"},reports:{t:"รายงาน"},settings:{t:"การตั้งค่า"}},
+  c:{live:"สด",opn:"ปกติ",sov:"อธิปไตยข้อมูล",av:"มูลค่าสินทรัพย์",ve:"ลดการปล่อย",fs:"ประหยัดอาหาร",hs:"แฮช/วินาที",tr:"ความน่าเชื่อถือ",la:"เวลาแฝง",lg:"ภาษา",cu:"สกุลเงิน",sy:"ระบบ",gp:"สร้าง PDF",gpi:"กำลังสร้าง…",gpd:"✓ PDF พร้อม",sd:"ข้อมูลที่ซีล",vn:"โหนดที่ถูกต้อง",cf:"ยืนยันแล้ว",py:"ผลผลิตสูงสุด",rs:"การแบ่งรายได้",bv:"บล็อกเชน",eh:"แฮชหลักฐาน",wa:"คำเตือน",p2:"ลายเซ็น 2 รายการรอดำเนินการ",fm:"ฟาร์ม",si:"Signal",navCore:"แพลตฟอร์มหลัก",navEnt:"เอนเทอร์ไพรส์",navSys:"ระบบ"}},
+zh:{dir:"ltr",nav:{dashboard:"付费服务演示版",farms:"农场管理",evidence:"证据包",compliance:"合规",asset:"碳资产",settlement:"结算",reports:"报告",carbonMap:"国家碳地图",billing:"计费",auditLogs:"审计日志",security:"安全中心",tenantRegions:"租户区域",revenueShare:"收益分配",settings:"设置"},
+  pg:{dashboard:{t:"付费服务演示版",s:"Enterprise Carbon Asset OS 演示 · 实时 · SHA-256 封存"},carbonMap:{t:"国家碳地图",s:""},billing:{t:"碳基计费",s:""},auditLogs:{t:"证据关联审计日志",s:""},security:{t:"安全审计 P0.5",s:""},tenantRegions:{t:"数据主权网格",s:""},revenueShare:{t:"收益分配 50/30/20",s:""},farms:{t:"农场"},evidence:{t:"证据"},compliance:{t:"合规"},asset:{t:"资产"},settlement:{t:"结算"},reports:{t:"报告"},settings:{t:"设置"}},
+  c:{live:"实时",opn:"正常运行",sov:"数据主权",av:"碳资产价值",ve:"已核实减排",fs:"饲料节省",hs:"哈希/秒",tr:"信任分",la:"延迟",lg:"语言",cu:"货币",sy:"系统",gp:"生成PDF",gpi:"生成中…",gpd:"✓ PDF就绪",sd:"已封存数据",vn:"有效节点",cf:"已确认",py:"峰值产量",rs:"收益分配",bv:"区块链验证",eh:"证据包哈希",wa:"警告",p2:"2个待处理结算签名",fm:"农场",si:"信号",navCore:"核心平台",navEnt:"企业版",navSys:"系统"}},
+ar:{dir:"rtl",nav:{dashboard:"نسخة تجريبية للخدمة المدفوعة",farms:"المزارع",evidence:"حزم الأدلة",compliance:"الامتثال",asset:"أصول الكربون",settlement:"التسوية",reports:"التقارير",carbonMap:"خريطة الكربون",billing:"الفواتير",auditLogs:"سجلات التدقيق",security:"مركز الأمان",tenantRegions:"مناطق المستأجر",revenueShare:"توزيع الإيرادات",settings:"الإعدادات"},
+  pg:{dashboard:{t:"نسخة تجريبية للخدمة المدفوعة",s:"عرض Enterprise Carbon Asset OS · مباشر · مختوم بـ SHA-256"},carbonMap:{t:"خريطة الكربون الوطنية",s:""},billing:{t:"الفواتير القائمة على الكربون",s:""},auditLogs:{t:"سجل التدقيق المرتبط بالأدلة",s:""},security:{t:"تدقيق الأمان P0.5",s:""},tenantRegions:{t:"شبكة السيادة على البيانات",s:""},revenueShare:{t:"توزيع الإيرادات 50/30/20",s:""},farms:{t:"المزارع"},evidence:{t:"الأدلة"},compliance:{t:"الامتثال"},asset:{t:"الأصول"},settlement:{t:"التسوية"},reports:{t:"التقارير"},settings:{t:"الإعدادات"}},
+  c:{live:"مباشر",opn:"التشغيل طبيعي",sov:"سيادة البيانات",av:"قيمة الأصول",ve:"التخفيضات المعتمدة",fs:"توفير العلف",hs:"تجزئة/ث",tr:"درجة الثقة",la:"الكمون",lg:"اللغة",cu:"العملة",sy:"النظام",gp:"إنشاء PDF",gpi:"جارٍ الإنشاء…",gpd:"✓ PDF جاهز",sd:"بيانات مختومة",vn:"عقدة صالحة",cf:"مؤكد",py:"أعلى إنتاج",rs:"توزيع الإيرادات",bv:"البلوكشين",eh:"تجزئة حزمة الأدلة",wa:"تحذير",p2:"توقيعا تسوية 2 معلقة",fm:"المزرعة",si:"سيغنال",navCore:"المنصة الأساسية",navEnt:"المؤسسي",navSys:"النظام"}},
+vi:{dir:"ltr",nav:{dashboard:"Phiên bản demo dịch vụ trả phí",farms:"Trang trại",evidence:"Gói bằng chứng",compliance:"Tuân thủ",asset:"Tài sản carbon",settlement:"Thanh toán",reports:"Báo cáo",carbonMap:"Bản đồ carbon",billing:"Thanh toán",auditLogs:"Nhật ký kiểm toán",security:"Trung tâm bảo mật",tenantRegions:"Vùng thuê",revenueShare:"Chia sẻ doanh thu",settings:"Cài đặt"},
+  pg:{dashboard:{t:"Phiên bản demo dịch vụ trả phí",s:"Demo Enterprise Carbon Asset OS · thời gian thực · niêm phong SHA-256"},carbonMap:{t:"Bản đồ carbon quốc gia",s:""},billing:{t:"Thanh toán dựa trên carbon",s:""},auditLogs:{t:"Nhật ký kiểm toán bằng chứng",s:""},security:{t:"Kiểm toán bảo mật P0.5",s:""},tenantRegions:{t:"Lưới chủ quyền dữ liệu",s:""},revenueShare:{t:"Chia sẻ doanh thu 50/30/20",s:""},farms:{t:"Trang trại"},evidence:{t:"Bằng chứng"},compliance:{t:"Tuân thủ"},asset:{t:"Tài sản"},settlement:{t:"Thanh toán"},reports:{t:"Báo cáo"},settings:{t:"Cài đặt"}},
+  c:{live:"TRỰC TIẾP",opn:"Hoạt động bình thường",sov:"Chủ quyền dữ liệu",av:"Giá trị tài sản",ve:"Giảm phát thải",fs:"Tiết kiệm thức ăn",hs:"Hash/giây",tr:"Độ tin cậy",la:"Độ trễ",lg:"Ngôn ngữ",cu:"Tiền tệ",sy:"Hệ thống",gp:"TẠO PDF",gpi:"Đang tạo…",gpd:"✓ PDF sẵn sàng",sd:"DỮ LIỆU NIÊM PHONG",vn:"Nút hợp lệ",cf:"ĐÃ XÁC NHẬN",py:"NĂNG SUẤT ĐỈNH",rs:"Chia sẻ doanh thu",bv:"Xác minh Blockchain",eh:"Hash gói bằng chứng",wa:"Cảnh báo",p2:"2 chữ ký đang chờ",fm:"Trang trại",si:"Signal",navCore:"Nền tảng cốt lõi",navEnt:"Doanh nghiệp",navSys:"Hệ thống"}},
+id:{dir:"ltr",nav:{dashboard:"Versi Demo Layanan Berbayar",farms:"Kebun",evidence:"Paket Bukti",compliance:"Kepatuhan",asset:"Aset Karbon",settlement:"Penyelesaian",reports:"Laporan",carbonMap:"Peta Karbon",billing:"Penagihan",auditLogs:"Log Audit",security:"Pusat Keamanan",tenantRegions:"Wilayah Penyewa",revenueShare:"Bagi Hasil",settings:"Pengaturan"},
+  pg:{dashboard:{t:"Versi Demo Layanan Berbayar",s:"Demo Enterprise Carbon Asset OS · real-time · tersegel SHA-256"},carbonMap:{t:"Peta Karbon Nasional",s:""},billing:{t:"Penagihan Berbasis Karbon",s:""},auditLogs:{t:"Log Audit Terhubung Bukti",s:""},security:{t:"Audit Keamanan P0.5",s:""},tenantRegions:{t:"Jaring Kedaulatan Data",s:""},revenueShare:{t:"Bagi Hasil 50/30/20",s:""},farms:{t:"Kebun"},evidence:{t:"Bukti"},compliance:{t:"Kepatuhan"},asset:{t:"Aset"},settlement:{t:"Penyelesaian"},reports:{t:"Laporan"},settings:{t:"Pengaturan"}},
+  c:{live:"LANGSUNG",opn:"Beroperasi Normal",sov:"Kedaulatan Data",av:"Nilai Aset Karbon",ve:"Pengurangan Terverifikasi",fs:"Hemat Pakan",hs:"Hash/dtk",tr:"Kepercayaan",la:"Latensi",lg:"Bahasa",cu:"Mata Uang",sy:"Sistem",gp:"BUAT PDF",gpi:"Membuat…",gpd:"✓ PDF siap",sd:"DATA TERSEGEL",vn:"Node Valid",cf:"TERKONFIRMASI",py:"HASIL PUNCAK",rs:"Bagi Hasil",bv:"Verifikasi Blockchain",eh:"Hash Paket Bukti",wa:"Peringatan",p2:"2 Tanda Tangan Tertunda",fm:"Kebun",si:"Signal",navCore:"Platform Inti",navEnt:"Enterprise",navSys:"Sistem"}},
+ru:{dir:"ltr",nav:{dashboard:"Демо-версия платного сервиса",farms:"Управление объектами",evidence:"Пакеты доказательств",compliance:"Соответствие",asset:"Углеродные активы",settlement:"Расчеты",reports:"Отчеты",carbonMap:"Национальная карта углерода",billing:"Биллинг",auditLogs:"Журнал аудита",security:"Центр безопасности",tenantRegions:"Регионы данных",revenueShare:"Распределение выручки",settings:"Настройки"},
+  pg:{dashboard:{t:"Демо-версия платного сервиса",s:"Демо Enterprise Carbon Asset OS · реальное время · SHA-256"},carbonMap:{t:"Национальная карта углерода",s:"Сокращение выбросов на уровне страны"},billing:{t:"Биллинг на основе углерода",s:""},auditLogs:{t:"Журнал аудита, связанный с доказательствами",s:""},security:{t:"Аудит безопасности P0.5",s:""},tenantRegions:{t:"Сеть суверенных данных",s:""},revenueShare:{t:"Распределение выручки 50/30/20",s:""},farms:{t:"Объекты"},evidence:{t:"Доказательства"},compliance:{t:"Соответствие"},asset:{t:"Активы"},settlement:{t:"Расчеты"},reports:{t:"Отчеты"},settings:{t:"Настройки"}},
+  c:{live:"В РЕАЛЬНОМ ВРЕМЕНИ",opn:"Работа: норма",sov:"Суверенные данные",av:"Стоимость актива",ve:"Подтвержденные сокращения",fs:"Экономия ресурсов",hs:"Хеш/сек",tr:"Оценка доверия",la:"Задержка",lg:"Язык",cu:"Валюта",sy:"Система",gp:"СОЗДАТЬ PDF",gpi:"Создание…",gpd:"✓ PDF готов",sd:"ЗАПЕЧАТАННЫЕ ДАННЫЕ",vn:"Действительный узел",cf:"ПОДТВЕРЖДЕНО",py:"ПИКОВАЯ ЭФФЕКТИВНОСТЬ",rs:"Распределение выручки",bv:"Проверка блокчейна",eh:"Хеш пакета доказательств",wa:"Предупреждение",p2:"2 подписи ожидают расчета",fm:"Объект",si:"Signal",navCore:"ОСНОВНАЯ ПЛАТФОРМА",navEnt:"ENTERPRISE",navSys:"СИСТЕМА"}},
+};
+
+const BILLING_COPY={
+ko:{title:"Carbon Asset OS 요금제",lead:"사업장, 프로젝트, 국가 인프라 규모에 맞춰 선택하세요.",
+  plans:[
+    {n:"스타터",type:"기본",price:"$500",per:"/ 월",feats:["1개 사업장","기본 MES 연계 + ERP","기본 MRV 리포트","Digital Evidence Pack","ESG 기본 리포트","CBAM 기본 리포트"],cta:"접근 요청",url:"/signup",col:"var(--t2)"},
+    {n:"프로페셔널",type:"Carbon Asset 운영형",price:"$1,000",per:"/ 월 + 프로젝트 서비스",feats:["최대 3개 사업장","MES + ERP 자동 연계","AI MRV 엔진","ISO 14064 패키지","CBAM 대응 패키지","Digital Evidence Engine","Carbon Asset Registry","탄소 프로젝트 컨설팅","AI 기반 컨설팅","AI 센터 별도 구매"],cta:"파일럿 예약",url:"/signup",col:"var(--ac)",feat:true,rec:"RECOMMENDED · Carbon Asset 운영형"},
+    {n:"엔터프라이즈",type:"정부 · 금융기관 · 대기업",price:"협의",per:"(연간 계약)",feats:["MES + ERP + IoT + AI 통합","국가/기업 단위 AI MRV 플랫폼","Digital Evidence Infrastructure","Carbon Asset Registry","White Label 지원","Data Sovereignty","Cross-Border Carbon Platform","SLA 99.9%","정부 및 국가 탄소 프로그램 지원","국제 인증 및 AI 센서 연동 검증","탄소 배출권 발행 지원"],cta:"엔터프라이즈 문의",url:"/?v=auth-two-1#contact",col:"var(--cy)"}
+  ]},
+en:{title:"Carbon Asset OS Plans",lead:"Choose a plan by site, project, or national infrastructure scale.",
+  plans:[
+    {n:"Starter",type:"Basic",price:"$500",per:"/ month",feats:["1 site","Basic MES integration + ERP","Basic MRV report","Digital Evidence Pack","Basic ESG report","Basic CBAM report"],cta:"Request Access",url:"/signup",col:"var(--t2)"},
+    {n:"Professional",type:"Carbon Asset Operations",price:"$1,000",per:"/ month + project services",feats:["Up to 3 sites","MES + ERP automated integration","AI MRV Engine","ISO 14064 package","CBAM response package","Digital Evidence Engine","Carbon Asset Registry","Carbon project consulting","AI-based consulting","AI Center sold separately"],cta:"Schedule Pilot",url:"/signup",col:"var(--ac)",feat:true,rec:"RECOMMENDED · Carbon Asset Operations"},
+    {n:"Enterprise",type:"Government · Financial Institutions · Large Enterprise",price:"Custom",per:"annual contract",feats:["MES + ERP + IoT + AI integration","National or enterprise AI MRV platform","Digital Evidence Infrastructure","Carbon Asset Registry","White Label support","Data Sovereignty","Cross-Border Carbon Platform","SLA 99.9%","Government and national carbon program support","International certification and AI sensor integration verification","Carbon credit issuance support"],cta:"Enterprise Contact",url:"/?v=auth-two-1#contact",col:"var(--cy)"}
+  ]},
+th:{title:"แพ็กเกจ Carbon Asset OS",lead:"เลือกแพ็กเกจตามขนาดไซต์ โครงการ หรือโครงสร้างพื้นฐานระดับประเทศ",
+  plans:[
+    {n:"เริ่มต้น",type:"พื้นฐาน",price:"$500",per:"/ เดือน",feats:["1 ไซต์","เชื่อมต่อ MES พื้นฐาน + ERP","รายงาน MRV พื้นฐาน","แพ็กเกจหลักฐานดิจิทัล","รายงาน ESG พื้นฐาน","รายงาน CBAM พื้นฐาน"],cta:"ขอสิทธิ์ใช้งาน",url:"/signup",col:"var(--t2)"},
+    {n:"มืออาชีพ",type:"ปฏิบัติการสินทรัพย์คาร์บอน",price:"$1,000",per:"/ เดือน + บริการโครงการ",feats:["สูงสุด 3 ไซต์","เชื่อมต่อ MES + ERP อัตโนมัติ","เอนจิน AI MRV","แพ็กเกจ ISO 14064","แพ็กเกจรับมือ CBAM","เอนจินหลักฐานดิจิทัล","ทะเบียนสินทรัพย์คาร์บอน","ที่ปรึกษาโครงการคาร์บอน","ที่ปรึกษาด้วย AI","ศูนย์ AI ซื้อแยกต่างหาก"],cta:"นัดหมายโครงการนำร่อง",url:"/signup",col:"var(--ac)",feat:true,rec:"แนะนำ · ปฏิบัติการสินทรัพย์คาร์บอน"},
+    {n:"องค์กร",type:"รัฐบาล · สถาบันการเงิน · องค์กรขนาดใหญ่",price:"ตามข้อตกลง",per:"สัญญารายปี",feats:["บูรณาการ MES + ERP + IoT + AI","แพลตฟอร์ม AI MRV ระดับประเทศหรือองค์กร","โครงสร้างพื้นฐานหลักฐานดิจิทัล","ทะเบียนสินทรัพย์คาร์บอน","รองรับไวท์เลเบล","อธิปไตยข้อมูล","แพลตฟอร์มคาร์บอนข้ามพรมแดน","SLA 99.9%","สนับสนุนโครงการคาร์บอนภาครัฐและระดับประเทศ","ตรวจสอบการเชื่อมต่อใบรับรองสากลและเซนเซอร์ AI","สนับสนุนการออกคาร์บอนเครดิต"],cta:"ติดต่อองค์กร",url:"/?v=auth-two-1#contact",col:"var(--cy)"}
+  ]},
+vi:{title:"Gói Carbon Asset OS",lead:"Chọn gói theo quy mô cơ sở, dự án hoặc hạ tầng quốc gia.",
+  plans:[
+    {n:"Starter",type:"Cơ bản",price:"$500",per:"/ tháng",feats:["1 cơ sở","Tích hợp MES cơ bản + ERP","Báo cáo MRV cơ bản","Digital Evidence Pack","Báo cáo ESG cơ bản","Báo cáo CBAM cơ bản"],cta:"Yêu cầu truy cập",url:"/signup",col:"var(--t2)"},
+    {n:"Professional",type:"Vận hành Carbon Asset",price:"$1,000",per:"/ tháng + dịch vụ dự án",feats:["Tối đa 3 cơ sở","Tích hợp MES + ERP tự động","AI MRV Engine","Gói ISO 14064","Gói CBAM","Digital Evidence Engine","Carbon Asset Registry","Tư vấn dự án carbon","Tư vấn dựa trên AI","AI Center bán riêng"],cta:"Đặt lịch pilot",url:"/signup",col:"var(--ac)",feat:true,rec:"RECOMMENDED · Carbon Asset Operations"},
+    {n:"Enterprise",type:"Chính phủ · Tài chính · Doanh nghiệp lớn",price:"Thỏa thuận",per:"hợp đồng năm",feats:["Tích hợp MES + ERP + IoT + AI","Nền tảng AI MRV cấp quốc gia/doanh nghiệp","Digital Evidence Infrastructure","Carbon Asset Registry","Hỗ trợ White Label","Data Sovereignty","Cross-Border Carbon Platform","SLA 99.9%","Hỗ trợ chương trình carbon quốc gia","Xác minh chứng nhận quốc tế và cảm biến AI","Hỗ trợ phát hành carbon credit"],cta:"Liên hệ Enterprise",url:"/?v=auth-two-1#contact",col:"var(--cy)"}
+  ]},
+id:{title:"Paket Carbon Asset OS",lead:"Pilih paket sesuai skala lokasi, proyek, atau infrastruktur nasional.",
+  plans:[
+    {n:"Starter",type:"Dasar",price:"$500",per:"/ bulan",feats:["1 lokasi","Integrasi MES dasar + ERP","Laporan MRV dasar","Digital Evidence Pack","Laporan ESG dasar","Laporan CBAM dasar"],cta:"Minta Akses",url:"/signup",col:"var(--t2)"},
+    {n:"Professional",type:"Operasi Carbon Asset",price:"$1,000",per:"/ bulan + layanan proyek",feats:["Maksimal 3 lokasi","Integrasi MES + ERP otomatis","AI MRV Engine","Paket ISO 14064","Paket CBAM","Digital Evidence Engine","Carbon Asset Registry","Konsultasi proyek karbon","Konsultasi berbasis AI","AI Center dibeli terpisah"],cta:"Jadwalkan Pilot",url:"/signup",col:"var(--ac)",feat:true,rec:"RECOMMENDED · Carbon Asset Operations"},
+    {n:"Enterprise",type:"Pemerintah · Keuangan · Perusahaan besar",price:"Negosiasi",per:"kontrak tahunan",feats:["Integrasi MES + ERP + IoT + AI","Platform AI MRV nasional/perusahaan","Digital Evidence Infrastructure","Carbon Asset Registry","Dukungan White Label","Data Sovereignty","Cross-Border Carbon Platform","SLA 99.9%","Dukungan program karbon pemerintah/nasional","Verifikasi sertifikasi internasional dan sensor AI","Dukungan penerbitan carbon credit"],cta:"Kontak Enterprise",url:"/?v=auth-two-1#contact",col:"var(--cy)"}
+  ]},
+zh:{title:"Carbon Asset OS 方案",lead:"按站点、项目或国家基础设施规模选择方案。",
+  plans:[
+    {n:"Starter",type:"基础",price:"$500",per:"/ 月",feats:["1 个站点","基础 MES + ERP 集成","基础 MRV 报告","Digital Evidence Pack","基础 ESG 报告","基础 CBAM 报告"],cta:"申请访问",url:"/signup",col:"var(--t2)"},
+    {n:"Professional",type:"Carbon Asset 运营型",price:"$1,000",per:"/ 月 + 项目服务",feats:["最多 3 个站点","MES + ERP 自动集成","AI MRV Engine","ISO 14064 包","CBAM 应对包","Digital Evidence Engine","Carbon Asset Registry","碳项目咨询","AI 咨询","AI Center 单独购买"],cta:"预约试点",url:"/signup",col:"var(--ac)",feat:true,rec:"RECOMMENDED · Carbon Asset Operations"},
+    {n:"Enterprise",type:"政府 · 金融机构 · 大型企业",price:"协商",per:"年度合同",feats:["MES + ERP + IoT + AI 集成","国家/企业级 AI MRV 平台","Digital Evidence Infrastructure","Carbon Asset Registry","White Label 支持","Data Sovereignty","Cross-Border Carbon Platform","SLA 99.9%","政府及国家碳项目支持","国际认证与 AI 传感器集成验证","碳信用发行支持"],cta:"企业联系",url:"/?v=auth-two-1#contact",col:"var(--cy)"}
+  ]},
+ru:{title:"Планы Carbon Asset OS",lead:"Выберите пакет по масштабу объекта, проекта или национальной инфраструктуры.",
+  plans:[
+    {n:"Starter",type:"Базовый",price:"$500",per:"/ месяц",feats:["1 объект","Базовая интеграция MES + ERP","Базовый MRV отчет","Digital Evidence Pack","Базовый ESG отчет","Базовый CBAM отчет"],cta:"Запросить доступ",url:"/signup",col:"var(--t2)"},
+    {n:"Professional",type:"Операции Carbon Asset",price:"$1,000",per:"/ месяц + проектные услуги",feats:["До 3 объектов","Автоматическая интеграция MES + ERP","AI MRV Engine","Пакет ISO 14064","Пакет CBAM","Digital Evidence Engine","Carbon Asset Registry","Консалтинг carbon project","AI-консалтинг","AI Center покупается отдельно"],cta:"Запланировать Pilot",url:"/signup",col:"var(--ac)",feat:true,rec:"RECOMMENDED · Carbon Asset Operations"},
+    {n:"Enterprise",type:"Правительство · Финансы · Крупный бизнес",price:"По договоренности",per:"годовой контракт",feats:["MES + ERP + IoT + AI интеграция","Национальная/корпоративная AI MRV платформа","Digital Evidence Infrastructure","Carbon Asset Registry","White Label поддержка","Data Sovereignty","Cross-Border Carbon Platform","SLA 99.9%","Поддержка государственных carbon programs","Международная сертификация и проверка AI sensors","Поддержка выпуска carbon credits"],cta:"Enterprise контакт",url:"/?v=auth-two-1#contact",col:"var(--cy)"}
+  ]},
+ar:{title:"خطط Carbon Asset OS",lead:"اختر حزمة حسب حجم الموقع أو المشروع أو البنية التحتية الوطنية.",
+  plans:[
+    {n:"Starter",type:"أساسي",price:"$500",per:"/ شهر",feats:["موقع واحد","تكامل MES أساسي + ERP","تقرير MRV أساسي","Digital Evidence Pack","تقرير ESG أساسي","تقرير CBAM أساسي"],cta:"طلب الوصول",url:"/signup",col:"var(--t2)"},
+    {n:"Professional",type:"تشغيل Carbon Asset",price:"$1,000",per:"/ شهر + خدمات المشروع",feats:["حتى 3 مواقع","تكامل MES + ERP تلقائي","AI MRV Engine","حزمة ISO 14064","حزمة CBAM","Digital Evidence Engine","Carbon Asset Registry","استشارات مشروع كربون","استشارات مبنية على AI","AI Center يباع منفصلا"],cta:"جدولة Pilot",url:"/signup",col:"var(--ac)",feat:true,rec:"RECOMMENDED · Carbon Asset Operations"},
+    {n:"Enterprise",type:"حكومة · مؤسسات مالية · شركات كبرى",price:"حسب الاتفاق",per:"عقد سنوي",feats:["تكامل MES + ERP + IoT + AI","منصة AI MRV وطنية أو مؤسسية","Digital Evidence Infrastructure","Carbon Asset Registry","دعم White Label","Data Sovereignty","Cross-Border Carbon Platform","SLA 99.9%","دعم برامج الكربون الحكومية والوطنية","التحقق من الشهادات الدولية وربط حساسات AI","دعم إصدار carbon credit"],cta:"تواصل Enterprise",url:"/?v=auth-two-1#contact",col:"var(--cy)"}
+  ]}
+};
+
+const MAP_COPY={
+ko:{title:"국가 탄소 맵",lead:"국가 단위 탄소 감축 현황 · 실시간 현장 노드 · 정부 및 공공 대시보드",stats:"국가 통계",nodes:"전체 현장 노드",reduced:"총 tCO₂e 감축량",asset:"총 자산 가치",trust:"평균 신뢰 점수",cbam:"CBAM 적격",leaks:"누출 경고",minor:"2건 경미",byRegion:"지역별",alerts:"누출 경고",active:"2건 활성",drift:"센서 드리프트",driftMsg:"CH₄ 측정값이 기준선보다 2.3σ 높음 · 수동 점검 필요",offline:"노드 오프라인",offlineMsg:"게이트웨이 18분 동안 연결 불가 · 자동 에스컬레이션",network:"실시간 탄소 노드 네트워크",networkSub:"41개 활성 노드 · 현장 CO₂e 추적 · 정부 화면",optimal:"최적",warning:"주의",alert:"경보",totalReduction:"총 감축량",assetLabel:"자산",footer:"SignalCare.ltd · 국가 탄소 노드 네트워크 · 실시간 MRV"},
+en:{title:"National Carbon Map",lead:"Country-level carbon reduction · Live site nodes · Government and public dashboard",stats:"National Statistics",nodes:"Total Site Nodes",reduced:"Total tCO₂e Reduced",asset:"Total Asset Value",trust:"Avg Trust Score",cbam:"CBAM Eligible",leaks:"Leak Alerts",minor:"2 minor",byRegion:"By Region",alerts:"Leak Alerts",active:"2 ACTIVE",drift:"Sensor Drift",driftMsg:"CH₄ reading 2.3σ above baseline · Manual check required",offline:"Node Offline",offlineMsg:"Gateway unreachable 18 min · Auto-escalated",network:"Live Carbon Node Network",networkSub:"41 active nodes · Site CO₂e tracking · Government view",optimal:"OPTIMAL",warning:"WARNING",alert:"ALERT",totalReduction:"TOTAL REDUCTION",assetLabel:"Asset",footer:"SignalCare.ltd · National Carbon Node Network · Real-time MRV"},
+th:{title:"แผนที่คาร์บอนแห่งชาติ",lead:"การลดคาร์บอนระดับประเทศ · โหนดภาคสนามแบบสด · แดชบอร์ดภาครัฐและสาธารณะ",stats:"สถิติระดับประเทศ",nodes:"โหนดไซต์ทั้งหมด",reduced:"ปริมาณ tCO₂e ที่ลดได้ทั้งหมด",asset:"มูลค่าสินทรัพย์รวม",trust:"คะแนนความน่าเชื่อถือเฉลี่ย",cbam:"เข้าเกณฑ์ CBAM",leaks:"การแจ้งเตือนการรั่ว",minor:"เล็กน้อย 2 รายการ",byRegion:"ตามภูมิภาค",alerts:"การแจ้งเตือนการรั่ว",active:"ใช้งาน 2 รายการ",drift:"เซนเซอร์คลาดเคลื่อน",driftMsg:"ค่า CH₄ สูงกว่าค่าฐาน 2.3σ · ต้องตรวจสอบด้วยตนเอง",offline:"โหนดออฟไลน์",offlineMsg:"เกตเวย์ติดต่อไม่ได้ 18 นาที · ยกระดับอัตโนมัติ",network:"เครือข่ายโหนดคาร์บอนสด",networkSub:"41 โหนดใช้งาน · ติดตาม CO₂e ภาคสนาม · มุมมองภาครัฐ",optimal:"เหมาะสม",warning:"คำเตือน",alert:"แจ้งเตือน",totalReduction:"การลดทั้งหมด",assetLabel:"สินทรัพย์",footer:"SignalCare.ltd · เครือข่ายโหนดคาร์บอนแห่งชาติ · MRV เรียลไทม์"},
+vi:{title:"Bản đồ carbon quốc gia",lead:"Giảm phát thải cấp quốc gia · Nút hiện trường trực tiếp · Bảng điều khiển chính phủ và công cộng",stats:"Thống kê quốc gia",nodes:"Tổng nút cơ sở",reduced:"Tổng tCO₂e đã giảm",asset:"Tổng giá trị tài sản",trust:"Điểm tin cậy trung bình",cbam:"Đủ điều kiện CBAM",leaks:"Cảnh báo rò rỉ",minor:"2 cảnh báo nhỏ",byRegion:"Theo khu vực",alerts:"Cảnh báo rò rỉ",active:"2 đang hoạt động",drift:"Sai lệch cảm biến",driftMsg:"Chỉ số CH₄ cao hơn baseline 2.3σ · Cần kiểm tra thủ công",offline:"Nút ngoại tuyến",offlineMsg:"Gateway mất kết nối 18 phút · Tự động chuyển cấp",network:"Mạng nút carbon trực tiếp",networkSub:"41 nút hoạt động · Theo dõi CO₂e hiện trường · Góc nhìn chính phủ",optimal:"TỐI ƯU",warning:"CẢNH BÁO",alert:"BÁO ĐỘNG",totalReduction:"TỔNG GIẢM PHÁT THẢI",assetLabel:"Tài sản",footer:"SignalCare.ltd · Mạng nút carbon quốc gia · MRV thời gian thực"},
+id:{title:"Peta Karbon Nasional",lead:"Pengurangan karbon tingkat negara · Node lokasi langsung · Dasbor pemerintah dan publik",stats:"Statistik Nasional",nodes:"Total Node Lokasi",reduced:"Total tCO₂e Berkurang",asset:"Total Nilai Aset",trust:"Skor Kepercayaan Rata-rata",cbam:"Memenuhi CBAM",leaks:"Peringatan Kebocoran",minor:"2 minor",byRegion:"Per Wilayah",alerts:"Peringatan Kebocoran",active:"2 AKTIF",drift:"Sensor Drift",driftMsg:"Pembacaan CH₄ 2.3σ di atas baseline · Perlu pemeriksaan manual",offline:"Node Offline",offlineMsg:"Gateway tidak terjangkau 18 menit · Eskalasi otomatis",network:"Jaringan Node Karbon Langsung",networkSub:"41 node aktif · Pelacakan CO₂e lokasi · Tampilan pemerintah",optimal:"OPTIMAL",warning:"PERINGATAN",alert:"ALERT",totalReduction:"TOTAL PENGURANGAN",assetLabel:"Aset",footer:"SignalCare.ltd · Jaringan Node Karbon Nasional · MRV real-time"},
+zh:{title:"国家碳地图",lead:"国家级减排 · 实时现场节点 · 政府与公共仪表板",stats:"国家统计",nodes:"现场节点总数",reduced:"总 tCO₂e 减排量",asset:"总资产价值",trust:"平均信任评分",cbam:"CBAM 合格",leaks:"泄漏警报",minor:"2 个轻微",byRegion:"按地区",alerts:"泄漏警报",active:"2 个活跃",drift:"传感器漂移",driftMsg:"CH₄ 读数高于基线 2.3σ · 需要人工检查",offline:"节点离线",offlineMsg:"网关 18 分钟不可达 · 已自动升级",network:"实时碳节点网络",networkSub:"41 个活跃节点 · 现场 CO₂e 跟踪 · 政府视图",optimal:"最佳",warning:"警告",alert:"警报",totalReduction:"总减排量",assetLabel:"资产",footer:"SignalCare.ltd · 国家碳节点网络 · 实时 MRV"},
+ru:{title:"Национальная карта углерода",lead:"Сокращение выбросов на уровне страны · Живые узлы объектов · Государственная и публичная панель",stats:"Национальная статистика",nodes:"Всего узлов объектов",reduced:"Всего сокращено tCO₂e",asset:"Общая стоимость активов",trust:"Средняя оценка доверия",cbam:"Подходит для CBAM",leaks:"Предупреждения об утечках",minor:"2 незначительных",byRegion:"По регионам",alerts:"Предупреждения об утечках",active:"2 АКТИВНЫХ",drift:"Дрейф датчика",driftMsg:"Показание CH₄ на 2.3σ выше базовой линии · Требуется ручная проверка",offline:"Узел офлайн",offlineMsg:"Шлюз недоступен 18 мин · Автоэскалация",network:"Живая сеть углеродных узлов",networkSub:"41 активный узел · Отслеживание CO₂e объектов · Вид для государства",optimal:"ОПТИМАЛЬНО",warning:"ПРЕДУПРЕЖДЕНИЕ",alert:"ТРЕВОГА",totalReduction:"ОБЩЕЕ СОКРАЩЕНИЕ",assetLabel:"Актив",footer:"SignalCare.ltd · Национальная сеть углеродных узлов · MRV в реальном времени"},
+ar:{title:"خريطة الكربون الوطنية",lead:"خفض الكربون على مستوى الدولة · عقد ميدانية مباشرة · لوحة حكومية وعامة",stats:"إحصاءات وطنية",nodes:"إجمالي عقد المواقع",reduced:"إجمالي tCO₂e المخفض",asset:"إجمالي قيمة الأصول",trust:"متوسط درجة الثقة",cbam:"مؤهل لـ CBAM",leaks:"تنبيهات التسرب",minor:"تنبيهان بسيطان",byRegion:"حسب المنطقة",alerts:"تنبيهات التسرب",active:"2 نشطة",drift:"انحراف المستشعر",driftMsg:"قراءة CH₄ أعلى من خط الأساس بمقدار 2.3σ · يلزم فحص يدوي",offline:"العقدة غير متصلة",offlineMsg:"البوابة غير متاحة لمدة 18 دقيقة · تم التصعيد تلقائيا",network:"شبكة عقد الكربون المباشرة",networkSub:"41 عقدة نشطة · تتبع CO₂e للمواقع · عرض حكومي",optimal:"مثالي",warning:"تحذير",alert:"إنذار",totalReduction:"إجمالي الخفض",assetLabel:"الأصل",footer:"SignalCare.ltd · شبكة عقد الكربون الوطنية · MRV مباشر"}
+};
+
+const UI_PATCH={
+ko:{
+"← Site":"← 홈페이지","Log out":"로그아웃","+ Evidence Pack":"+ 증거 팩","Carbon Data OS v4 Enterprise":"Carbon Asset OS v4 엔터프라이즈","41 NODES ACTIVE":"41개 노드 활성",
+"Live Sensor Stream":"실시간 센서 스트림","PILOT_SITE_01 · CH₄ · CO₂ · Flow · Power · Real-time ingestion":"PILOT_SITE_01 · CH₄ · CO₂ · 유량 · 전력 · 실시간 수집","Trust":"신뢰도","Settlement":"정산","6 Pending":"6건 대기","ESG Score":"ESG 점수","Hash/sec":"해시/초","Live SHA-256 Stream":"실시간 SHA-256 스트림","AI Runtime":"AI 실행 환경","Evidence Integrity":"증거 무결성","Tamper Detected":"위변조 감지","14,820 packs":"14,820개 팩","Farm 50%":"현장 50%",
+"Evidence Pack Generated":"증거 팩 생성","CBAM PDF Downloaded":"CBAM PDF 다운로드","Settlement Executed":"정산 실행","API Key Rotated":"API 키 교체","Evidence Pack Viewed":"증거 팩 조회","Security Scan Completed":"보안 스캔 완료","Failed Login Attempt ×3":"로그인 실패 3회","Tamper Check Passed":"위변조 검사 통과","ISO 14064 Report Generated":"ISO 14064 보고서 생성","Tenant Residency Verified":"테넌트 데이터 위치 검증","Total Logs Today":"오늘 전체 로그","Evidence Events":"증거 이벤트","Warnings":"경고","Critical Alerts":"긴급 경보","Immutable Audit Trail":"불변 감사 추적","Every entry SHA-256 sealed · ISO 27001 · GDPR Art.30 · SOC 2 compliant":"모든 항목 SHA-256 봉인 · ISO 27001 · GDPR Art.30 · SOC 2 대응","Export CSV":"CSV 내보내기","Filter":"필터","Event":"이벤트","Actor":"사용자","Farm / Scope":"현장 / 범위","SHA-256 Seal":"SHA-256 봉인","Severity":"심각도","Timestamp":"시간",
+"Tests Passed":"통과한 테스트","Action required":"조치 필요","Encryption":"암호화","Last Scan":"최근 스캔","Security Checklist · P0.5":"보안 체크리스트 · P0.5","DLP Scan Results":"DLP 스캔 결과","PII Detection Rules":"개인정보 탐지 규칙","Cross-Tenant Leak Test":"테넌트 간 누출 테스트","Data Residency Enforcement":"데이터 현지 저장 적용","Sensitive Field Masking":"민감 필드 마스킹","Items Need Attention":"개 항목 확인 필요","Run DLP Fix →":"DLP 수정 실행 →","RBAC Permission Matrix":"RBAC 권한 매트릭스","Role":"역할","Admin":"관리자","Auditor":"감사자","Finance":"재무","Farm Owner":"현장 소유자","Government":"정부","Threat Timeline (24h)":"위협 타임라인 (24시간)",
+"Data Sovereign Mesh Architecture":"데이터 주권 메시 아키텍처","Active Regions":"활성 지역","Planned":"예정","Total Nodes":"전체 노드","Data Residency Rules":"데이터 현지 저장 규칙","ALL COMPLIANT":"전체 준수","Country":"국가","Storage Enforcement":"저장 위치 강제","Regulation":"규정","Status":"상태","Central Metadata Hub":"중앙 메타데이터 허브","Meta Records":"메타 기록","Cross-Region Queries":"지역 간 질의","Sync Latency":"동기화 지연","Tenant Isolation":"테넌트 격리","Data Never Leaves Region":"데이터 지역 외 이동 금지","Full compliance across all 5 active regions":"5개 활성 지역 전체 준수",
+"Carbon Credit Revenue":"탄소 크레딧 수익","Farm Owner":"현장 소유자","Tech Partners":"기술 파트너","Farm Share (50%)":"현장 배분 (50%)","3 farms this month":"이번 달 3개 현장","Platform revenue":"플랫폼 수익","Total Pool":"총 풀","Gross this month":"이번 달 총액","Settlement by Farm":"현장별 정산","Partner Revenue Split":"파트너 수익 배분","Data Partners":"데이터 파트너","Total Partner (20%)":"파트너 합계 (20%)","Revenue Growth":"수익 성장","MoM Growth":"전월 대비 성장","Annualized":"연환산","Demo Version · Coming soon":"데모 버전 · 준비 중","PASS":"통과","WARN":"주의","CRIT":"긴급","ACTIVE":"활성","PLANNED":"예정","CONFIGURING":"설정 중","PENDING":"대기","PAID":"지급 완료","PROCESSING":"처리 중","COMPLIANT":"준수","Dashboard":"대시보드","Billing":"빌링","Audit":"감사","Security":"보안","Tenant":"테넌트","Revenue":"수익"
+},
+th:{"← Site":"← เว็บไซต์","Log out":"ออกจากระบบ","+ Evidence Pack":"+ แพ็กเกจหลักฐาน","Live Sensor Stream":"สตรีมเซนเซอร์สด","Real-time ingestion":"นำเข้าข้อมูลเรียลไทม์","Trust":"ความน่าเชื่อถือ","Settlement":"การชำระ","Pending":"รอดำเนินการ","ESG Score":"คะแนน ESG","Live SHA-256 Stream":"สตรีม SHA-256 สด","AI Runtime":"รันไทม์ AI","Evidence Integrity":"ความสมบูรณ์ของหลักฐาน","Tamper Detected":"ตรวจพบการแก้ไข","Evidence Pack Generated":"สร้างแพ็กเกจหลักฐาน","CBAM PDF Downloaded":"ดาวน์โหลด PDF CBAM","Security Scan Completed":"สแกนความปลอดภัยเสร็จสิ้น","Warnings":"คำเตือน","Critical Alerts":"การแจ้งเตือนวิกฤต","Immutable Audit Trail":"บันทึกตรวจสอบแบบแก้ไขไม่ได้","Export CSV":"ส่งออก CSV","Filter":"ตัวกรอง","Event":"เหตุการณ์","Actor":"ผู้ดำเนินการ","Severity":"ระดับความรุนแรง","Timestamp":"เวลา","Tests Passed":"ทดสอบผ่าน","Encryption":"การเข้ารหัส","Last Scan":"สแกนล่าสุด","Role":"บทบาท","Admin":"ผู้ดูแล","Auditor":"ผู้ตรวจสอบ","Finance":"การเงิน","Government":"รัฐบาล","Active Regions":"ภูมิภาคที่ใช้งาน","Total Nodes":"โหนดทั้งหมด","Country":"ประเทศ","Status":"สถานะ","Revenue Growth":"การเติบโตรายได้","Demo Version · Coming soon":"เวอร์ชันเดโม · เร็วๆ นี้","PASS":"ผ่าน","WARN":"เตือน","ACTIVE":"ใช้งาน","PLANNED":"วางแผน","CONFIGURING":"กำลังกำหนดค่า","PENDING":"รอดำเนินการ","PAID":"จ่ายแล้ว","PROCESSING":"กำลังประมวลผล"},
+vi:{"← Site":"← Trang chủ","Log out":"Đăng xuất","+ Evidence Pack":"+ Gói bằng chứng","Live Sensor Stream":"Luồng cảm biến trực tiếp","Real-time ingestion":"nhập dữ liệu thời gian thực","Trust":"Tin cậy","Settlement":"Quyết toán","Pending":"Đang chờ","ESG Score":"Điểm ESG","Live SHA-256 Stream":"Luồng SHA-256 trực tiếp","AI Runtime":"Môi trường chạy AI","Evidence Integrity":"Toàn vẹn bằng chứng","Tamper Detected":"Phát hiện chỉnh sửa","Warnings":"Cảnh báo","Critical Alerts":"Cảnh báo nghiêm trọng","Immutable Audit Trail":"Dấu vết kiểm toán bất biến","Export CSV":"Xuất CSV","Filter":"Bộ lọc","Event":"Sự kiện","Actor":"Người thực hiện","Severity":"Mức độ","Timestamp":"Thời gian","Tests Passed":"Kiểm thử đạt","Encryption":"Mã hóa","Last Scan":"Lần quét gần nhất","Role":"Vai trò","Admin":"Quản trị","Auditor":"Kiểm toán","Finance":"Tài chính","Government":"Chính phủ","Active Regions":"Vùng hoạt động","Total Nodes":"Tổng nút","Country":"Quốc gia","Status":"Trạng thái","Revenue Growth":"Tăng trưởng doanh thu","Demo Version · Coming soon":"Bản demo · Sắp ra mắt","PASS":"ĐẠT","WARN":"CẢNH BÁO","ACTIVE":"HOẠT ĐỘNG","PLANNED":"ĐÃ LÊN KẾ HOẠCH","CONFIGURING":"ĐANG CẤU HÌNH","PENDING":"ĐANG CHỜ","PAID":"ĐÃ TRẢ","PROCESSING":"ĐANG XỬ LÝ"},
+id:{"← Site":"← Situs","Log out":"Keluar","+ Evidence Pack":"+ Paket Bukti","Live Sensor Stream":"Stream Sensor Langsung","Real-time ingestion":"ingest real-time","Trust":"Kepercayaan","Settlement":"Penyelesaian","Pending":"Tertunda","ESG Score":"Skor ESG","Live SHA-256 Stream":"Stream SHA-256 Langsung","AI Runtime":"Runtime AI","Evidence Integrity":"Integritas Bukti","Tamper Detected":"Manipulasi Terdeteksi","Warnings":"Peringatan","Critical Alerts":"Peringatan Kritis","Immutable Audit Trail":"Jejak Audit Imutabel","Export CSV":"Ekspor CSV","Filter":"Filter","Event":"Peristiwa","Actor":"Aktor","Severity":"Keparahan","Timestamp":"Waktu","Tests Passed":"Tes Lulus","Encryption":"Enkripsi","Last Scan":"Pindai Terakhir","Role":"Peran","Admin":"Admin","Auditor":"Auditor","Finance":"Keuangan","Government":"Pemerintah","Active Regions":"Wilayah Aktif","Total Nodes":"Total Node","Country":"Negara","Status":"Status","Revenue Growth":"Pertumbuhan Pendapatan","Demo Version · Coming soon":"Versi demo · Segera hadir","PASS":"LULUS","WARN":"PERINGATAN","ACTIVE":"AKTIF","PLANNED":"DIRENCANAKAN","CONFIGURING":"KONFIGURASI","PENDING":"TERTUNDA","PAID":"DIBAYAR","PROCESSING":"DIPROSES"},
+zh:{"← Site":"← 网站","Log out":"退出登录","+ Evidence Pack":"+ 证据包","Live Sensor Stream":"实时传感器流","Real-time ingestion":"实时采集","Trust":"信任","Settlement":"结算","Pending":"待处理","ESG Score":"ESG 评分","Live SHA-256 Stream":"实时 SHA-256 流","AI Runtime":"AI 运行环境","Evidence Integrity":"证据完整性","Tamper Detected":"检测到篡改","Warnings":"警告","Critical Alerts":"严重警报","Immutable Audit Trail":"不可变审计轨迹","Export CSV":"导出 CSV","Filter":"筛选","Event":"事件","Actor":"操作者","Severity":"严重性","Timestamp":"时间戳","Tests Passed":"测试通过","Encryption":"加密","Last Scan":"最近扫描","Role":"角色","Admin":"管理员","Auditor":"审计员","Finance":"财务","Government":"政府","Active Regions":"活跃区域","Total Nodes":"节点总数","Country":"国家","Status":"状态","Revenue Growth":"收入增长","Demo Version · Coming soon":"演示版 · 即将推出","PASS":"通过","WARN":"警告","ACTIVE":"活跃","PLANNED":"计划中","CONFIGURING":"配置中","PENDING":"待处理","PAID":"已支付","PROCESSING":"处理中"},
+ru:{"← Site":"← Сайт","Log out":"Выйти","+ Evidence Pack":"+ Пакет доказательств","Live Sensor Stream":"Поток датчиков","Real-time ingestion":"прием в реальном времени","Trust":"Доверие","Settlement":"Расчеты","Pending":"Ожидает","ESG Score":"Оценка ESG","Live SHA-256 Stream":"Поток SHA-256","AI Runtime":"Среда AI","Evidence Integrity":"Целостность доказательств","Tamper Detected":"Обнаружено изменение","Warnings":"Предупреждения","Critical Alerts":"Критические тревоги","Immutable Audit Trail":"Неизменяемый аудит","Export CSV":"Экспорт CSV","Filter":"Фильтр","Event":"Событие","Actor":"Исполнитель","Severity":"Важность","Timestamp":"Время","Tests Passed":"Тесты пройдены","Encryption":"Шифрование","Last Scan":"Последняя проверка","Role":"Роль","Admin":"Администратор","Auditor":"Аудитор","Finance":"Финансы","Government":"Государство","Active Regions":"Активные регионы","Total Nodes":"Всего узлов","Country":"Страна","Status":"Статус","Revenue Growth":"Рост выручки","Demo Version · Coming soon":"Демо-версия · скоро","PASS":"ПРОЙДЕНО","WARN":"ПРЕДУПР.","ACTIVE":"АКТИВНО","PLANNED":"ЗАПЛАНИРОВАНО","CONFIGURING":"НАСТРОЙКА","PENDING":"ОЖИДАЕТ","PAID":"ОПЛАЧЕНО","PROCESSING":"ОБРАБОТКА"},
+ar:{"← Site":"← الموقع","Log out":"تسجيل الخروج","+ Evidence Pack":"+ حزمة أدلة","Live Sensor Stream":"تدفق المستشعرات المباشر","Real-time ingestion":"إدخال مباشر","Trust":"الثقة","Settlement":"التسوية","Pending":"قيد الانتظار","ESG Score":"درجة ESG","Live SHA-256 Stream":"تدفق SHA-256 مباشر","AI Runtime":"بيئة تشغيل AI","Evidence Integrity":"سلامة الأدلة","Tamper Detected":"تم اكتشاف تلاعب","Warnings":"تحذيرات","Critical Alerts":"تنبيهات حرجة","Immutable Audit Trail":"مسار تدقيق غير قابل للتعديل","Export CSV":"تصدير CSV","Filter":"تصفية","Event":"الحدث","Actor":"الفاعل","Severity":"الشدة","Timestamp":"الوقت","Tests Passed":"اختبارات ناجحة","Encryption":"التشفير","Last Scan":"آخر فحص","Role":"الدور","Admin":"المسؤول","Auditor":"المدقق","Finance":"المالية","Government":"الحكومة","Active Regions":"المناطق النشطة","Total Nodes":"إجمالي العقد","Country":"الدولة","Status":"الحالة","Revenue Growth":"نمو الإيرادات","Demo Version · Coming soon":"نسخة تجريبية · قريبا","PASS":"ناجح","WARN":"تحذير","ACTIVE":"نشط","PLANNED":"مخطط","CONFIGURING":"قيد الإعداد","PENDING":"قيد الانتظار","PAID":"مدفوع","PROCESSING":"قيد المعالجة"}
+};
+
+Object.assign(UI_PATCH.ko,{
+"All SHA-256 sealed":"전체 SHA-256 봉인","42% of total":"전체의 42%","Needs review":"검토 필요","Login anomaly":"로그인 이상 징후","pass rate":"통과율","TLS 1.3 enforced":"TLS 1.3 적용","Auto every 4h":"4시간마다 자동","2 WARNINGS":"주의 2건","Active · 14 patterns":"활성 · 14개 패턴","2 edge cases":"경계 사례 2건","Configured":"설정 완료","Active":"활성","Cross-region metadata exposure in VN tenant":"VN 테넌트의 지역 간 메타데이터 노출","DLP rule gap: NH₃ sensor data path":"DLP 규칙 누락: NH₃ 센서 데이터 경로","Spike at":"급증 시각","Failed login ×3":"로그인 실패 3회","Auto-blocked":"자동 차단","IP flagged":"IP 플래그 처리",
+"Tenant Data Isolation (Row-Level Security)":"테넌트 데이터 격리 (행 단위 보안)","Encryption at Rest — AES-256":"저장 데이터 암호화 — AES-256","Encryption in Transit — TLS 1.3":"전송 데이터 암호화 — TLS 1.3","RBAC Access Control":"RBAC 접근 제어","DLP — Data Loss Prevention":"DLP — 데이터 유출 방지","API Rate Limiting & Throttling":"API 속도 제한 및 제어","SQL Injection Protection":"SQL 인젝션 보호","XSS / CSRF Protection":"XSS / CSRF 보호","Audit Log Integrity (Append-Only)":"감사 로그 무결성 (추가 전용)","SHA-256 Seal Verification":"SHA-256 봉인 검증","Cross-Region Data Leakage Test":"지역 간 데이터 누출 테스트","JWT Token Security & Rotation":"JWT 토큰 보안 및 교체",
+"Evidence":"증거","Audit":"감사","READ ONLY":"읽기 전용","RO":"읽기 전용","Full compliance across all 5 active regions":"5개 활성 리전 전체 준수","Each country's data stays within its sovereign cloud. HQ manages only metadata — never raw data.":"각 국가의 데이터는 해당 국가 클라우드에만 저장됩니다. 본사는 메타데이터만 관리하며 원시 데이터에는 접근하지 않습니다."
+});
+Object.assign(UI_PATCH.th,{"Tenant isolation · AES-256 · DLP · RBAC verification":"การแยกผู้เช่า · AES-256 · DLP · RBAC","Action required":"ต้องดำเนินการ","pass rate":"อัตราผ่าน","TLS 1.3 enforced":"บังคับใช้ TLS 1.3","Auto every 4h":"อัตโนมัติทุก 4 ชม.","Security Checklist · P0.5":"รายการตรวจสอบความปลอดภัย · P0.5","DLP Scan Results":"ผลการสแกน DLP","Tenant Data Isolation (Row-Level Security)":"การแยกข้อมูลผู้เช่า (Row-Level Security)","Encryption at Rest — AES-256":"การเข้ารหัสข้อมูลพัก — AES-256","Encryption in Transit — TLS 1.3":"การเข้ารหัสระหว่างส่ง — TLS 1.3","RBAC Access Control":"การควบคุมสิทธิ์ RBAC","Data Loss Prevention":"การป้องกันข้อมูลรั่วไหล","Configured":"กำหนดค่าแล้ว","Active · 14 patterns":"ใช้งาน · 14 รูปแบบ"});
+Object.assign(UI_PATCH.vi,{"Tenant isolation · AES-256 · DLP · RBAC verification":"Tách biệt tenant · AES-256 · DLP · RBAC","Action required":"Cần xử lý","pass rate":"tỷ lệ đạt","TLS 1.3 enforced":"Áp dụng TLS 1.3","Auto every 4h":"Tự động mỗi 4 giờ","Security Checklist · P0.5":"Danh sách kiểm tra bảo mật · P0.5","DLP Scan Results":"Kết quả quét DLP","Tenant Data Isolation (Row-Level Security)":"Tách biệt dữ liệu tenant (Row-Level Security)","Encryption at Rest — AES-256":"Mã hóa dữ liệu lưu trữ — AES-256","Encryption in Transit — TLS 1.3":"Mã hóa truyền tải — TLS 1.3","RBAC Access Control":"Kiểm soát truy cập RBAC","Data Loss Prevention":"Ngăn mất dữ liệu","Configured":"Đã cấu hình","Active · 14 patterns":"Hoạt động · 14 mẫu"});
+Object.assign(UI_PATCH.id,{"Tenant isolation · AES-256 · DLP · RBAC verification":"Isolasi tenant · AES-256 · DLP · RBAC","Action required":"Perlu tindakan","pass rate":"tingkat lulus","TLS 1.3 enforced":"TLS 1.3 diterapkan","Auto every 4h":"Otomatis tiap 4 jam","Security Checklist · P0.5":"Daftar Periksa Keamanan · P0.5","DLP Scan Results":"Hasil Pemindaian DLP","Tenant Data Isolation (Row-Level Security)":"Isolasi Data Tenant (Row-Level Security)","Encryption at Rest — AES-256":"Enkripsi saat tersimpan — AES-256","Encryption in Transit — TLS 1.3":"Enkripsi saat transmisi — TLS 1.3","RBAC Access Control":"Kontrol Akses RBAC","Data Loss Prevention":"Pencegahan Kehilangan Data","Configured":"Terkonfigurasi","Active · 14 patterns":"Aktif · 14 pola"});
+Object.assign(UI_PATCH.zh,{"Tenant isolation · AES-256 · DLP · RBAC verification":"租户隔离 · AES-256 · DLP · RBAC","Action required":"需要处理","pass rate":"通过率","TLS 1.3 enforced":"已强制 TLS 1.3","Auto every 4h":"每 4 小时自动","Security Checklist · P0.5":"安全检查清单 · P0.5","DLP Scan Results":"DLP 扫描结果","Tenant Data Isolation (Row-Level Security)":"租户数据隔离（行级安全）","Encryption at Rest — AES-256":"静态数据加密 — AES-256","Encryption in Transit — TLS 1.3":"传输加密 — TLS 1.3","RBAC Access Control":"RBAC 访问控制","Data Loss Prevention":"数据防泄漏","Configured":"已配置","Active · 14 patterns":"启用 · 14 个模式"});
+Object.assign(UI_PATCH.ru,{"Tenant isolation · AES-256 · DLP · RBAC verification":"Изоляция tenant · AES-256 · DLP · RBAC","Action required":"Требуется действие","pass rate":"процент прохождения","TLS 1.3 enforced":"TLS 1.3 включен","Auto every 4h":"Авто каждые 4 ч","Security Checklist · P0.5":"Контрольный список безопасности · P0.5","DLP Scan Results":"Результаты DLP-скана","Tenant Data Isolation (Row-Level Security)":"Изоляция данных tenant (Row-Level Security)","Encryption at Rest — AES-256":"Шифрование при хранении — AES-256","Encryption in Transit — TLS 1.3":"Шифрование передачи — TLS 1.3","RBAC Access Control":"Контроль доступа RBAC","Data Loss Prevention":"Предотвращение потери данных","Configured":"Настроено","Active · 14 patterns":"Активно · 14 шаблонов"});
+Object.assign(UI_PATCH.ar,{"Tenant isolation · AES-256 · DLP · RBAC verification":"عزل المستأجر · AES-256 · DLP · RBAC","Action required":"يتطلب إجراء","pass rate":"معدل النجاح","TLS 1.3 enforced":"TLS 1.3 مفعل","Auto every 4h":"تلقائي كل 4 ساعات","Security Checklist · P0.5":"قائمة فحص الأمان · P0.5","DLP Scan Results":"نتائج فحص DLP","Tenant Data Isolation (Row-Level Security)":"عزل بيانات المستأجر (أمان على مستوى الصف)","Encryption at Rest — AES-256":"تشفير البيانات المخزنة — AES-256","Encryption in Transit — TLS 1.3":"تشفير النقل — TLS 1.3","RBAC Access Control":"تحكم وصول RBAC","Data Loss Prevention":"منع فقدان البيانات","Configured":"تم الإعداد","Active · 14 patterns":"نشط · 14 نمطا"});
+Object.assign(UI_PATCH.zh,{"2 WARNINGS":"2 个警告","PII Detection Rules":"PII 检测规则","Cross-Tenant Leak Test":"跨租户泄漏测试","Data Residency Enforcement":"数据驻留执行","Sensitive Field Masking":"敏感字段脱敏","Items Need Attention":"项需要处理","Run DLP Fix →":"运行 DLP 修复 →","API Rate Limiting & Throttling":"API 限流与节流","SQL Injection Protection":"SQL 注入防护","XSS / CSRF Protection":"XSS / CSRF 防护","Audit Log Integrity (Append-Only)":"审计日志完整性（仅追加）","SHA-256 Seal Verification":"SHA-256 封印验证","Cross-Region Data Leakage Test":"跨区域数据泄漏测试","JWT Token Security & Rotation":"JWT 令牌安全与轮换","Cross-region metadata exposure in VN tenant":"VN 租户跨区域元数据暴露","DLP rule gap: NH₃ sensor data path":"DLP 规则缺口：NH₃ 传感器数据路径","Active":"启用","2 edge cases":"2 个边界案例"});
+Object.assign(UI_PATCH.th,{"2 WARNINGS":"คำเตือน 2 รายการ","PII Detection Rules":"กฎตรวจจับ PII","Cross-Tenant Leak Test":"ทดสอบการรั่วข้ามผู้เช่า","Data Residency Enforcement":"บังคับใช้นโยบายที่ตั้งข้อมูล","Sensitive Field Masking":"ปิดบังฟิลด์ละเอียดอ่อน","Items Need Attention":"รายการต้องตรวจสอบ","Run DLP Fix →":"เรียกใช้การแก้ไข DLP →","API Rate Limiting & Throttling":"จำกัดอัตรา API","SQL Injection Protection":"ป้องกัน SQL Injection","XSS / CSRF Protection":"ป้องกัน XSS / CSRF","Audit Log Integrity (Append-Only)":"ความสมบูรณ์บันทึกตรวจสอบ","SHA-256 Seal Verification":"ตรวจสอบการปิดผนึก SHA-256","Cross-Region Data Leakage Test":"ทดสอบข้อมูลรั่วข้ามภูมิภาค","JWT Token Security & Rotation":"ความปลอดภัยและการหมุน JWT","Cross-region metadata exposure in VN tenant":"เมทาดาทาข้ามภูมิภาคในผู้เช่า VN","DLP rule gap: NH₃ sensor data path":"ช่องว่างกฎ DLP: เส้นทางข้อมูลเซนเซอร์ NH₃","2 edge cases":"2 กรณีขอบ"});
+Object.assign(UI_PATCH.vi,{"2 WARNINGS":"2 cảnh báo","PII Detection Rules":"Quy tắc phát hiện PII","Cross-Tenant Leak Test":"Kiểm tra rò rỉ giữa tenant","Data Residency Enforcement":"Thực thi lưu trú dữ liệu","Sensitive Field Masking":"Ẩn trường nhạy cảm","Items Need Attention":"mục cần chú ý","Run DLP Fix →":"Chạy sửa lỗi DLP →","API Rate Limiting & Throttling":"Giới hạn tốc độ API","SQL Injection Protection":"Bảo vệ SQL Injection","XSS / CSRF Protection":"Bảo vệ XSS / CSRF","Audit Log Integrity (Append-Only)":"Toàn vẹn nhật ký kiểm toán","SHA-256 Seal Verification":"Xác minh niêm phong SHA-256","Cross-Region Data Leakage Test":"Kiểm tra rò rỉ dữ liệu liên vùng","JWT Token Security & Rotation":"Bảo mật và xoay vòng JWT","Cross-region metadata exposure in VN tenant":"Lộ metadata liên vùng trong tenant VN","DLP rule gap: NH₃ sensor data path":"Thiếu quy tắc DLP: đường dữ liệu cảm biến NH₃","2 edge cases":"2 trường hợp biên"});
+Object.assign(UI_PATCH.id,{"2 WARNINGS":"2 peringatan","PII Detection Rules":"Aturan Deteksi PII","Cross-Tenant Leak Test":"Uji Kebocoran Antar-Tenant","Data Residency Enforcement":"Penegakan Residensi Data","Sensitive Field Masking":"Masking Field Sensitif","Items Need Attention":"item perlu perhatian","Run DLP Fix →":"Jalankan Perbaikan DLP →","API Rate Limiting & Throttling":"Pembatasan Rate API","SQL Injection Protection":"Perlindungan SQL Injection","XSS / CSRF Protection":"Perlindungan XSS / CSRF","Audit Log Integrity (Append-Only)":"Integritas Log Audit","SHA-256 Seal Verification":"Verifikasi Segel SHA-256","Cross-Region Data Leakage Test":"Uji Kebocoran Data Lintas Wilayah","JWT Token Security & Rotation":"Keamanan dan Rotasi Token JWT","Cross-region metadata exposure in VN tenant":"Paparan metadata lintas wilayah di tenant VN","DLP rule gap: NH₃ sensor data path":"Celah aturan DLP: jalur data sensor NH₃","2 edge cases":"2 kasus tepi"});
+Object.assign(UI_PATCH.ru,{"2 WARNINGS":"2 предупреждения","PII Detection Rules":"Правила обнаружения PII","Cross-Tenant Leak Test":"Тест утечки между tenant","Data Residency Enforcement":"Контроль резидентности данных","Sensitive Field Masking":"Маскирование чувствительных полей","Items Need Attention":"элемента требуют внимания","Run DLP Fix →":"Запустить исправление DLP →","API Rate Limiting & Throttling":"Ограничение скорости API","SQL Injection Protection":"Защита от SQL Injection","XSS / CSRF Protection":"Защита XSS / CSRF","Audit Log Integrity (Append-Only)":"Целостность журнала аудита","SHA-256 Seal Verification":"Проверка SHA-256 печати","Cross-Region Data Leakage Test":"Тест утечки между регионами","JWT Token Security & Rotation":"Безопасность и ротация JWT","Cross-region metadata exposure in VN tenant":"Межрегиональное раскрытие метаданных в tenant VN","DLP rule gap: NH₃ sensor data path":"Пробел правила DLP: путь данных датчика NH₃","2 edge cases":"2 пограничных случая"});
+Object.assign(UI_PATCH.ar,{"2 WARNINGS":"تحذيران","PII Detection Rules":"قواعد كشف PII","Cross-Tenant Leak Test":"اختبار التسرب بين المستأجرين","Data Residency Enforcement":"فرض إقامة البيانات","Sensitive Field Masking":"إخفاء الحقول الحساسة","Items Need Attention":"عناصر تحتاج انتباها","Run DLP Fix →":"تشغيل إصلاح DLP →","API Rate Limiting & Throttling":"تحديد معدل API","SQL Injection Protection":"حماية SQL Injection","XSS / CSRF Protection":"حماية XSS / CSRF","Audit Log Integrity (Append-Only)":"سلامة سجل التدقيق","SHA-256 Seal Verification":"التحقق من ختم SHA-256","Cross-Region Data Leakage Test":"اختبار تسرب البيانات بين المناطق","JWT Token Security & Rotation":"أمان وتدوير JWT","Cross-region metadata exposure in VN tenant":"تعرض بيانات وصفية عابرة للمناطق في مستأجر VN","DLP rule gap: NH₃ sensor data path":"فجوة قاعدة DLP: مسار بيانات مستشعر NH₃","2 edge cases":"حالتان حديتان"});
+Object.assign(UI_PATCH.zh,{"RBAC Permission Matrix":"RBAC 权限矩阵","Evidence":"证据","Billing":"计费","Audit":"审计","Farm Owner":"现场所有者","Threat Timeline (24h)":"威胁时间线（24 小时）","Spike at":"峰值时间","Failed login ×3":"登录失败 ×3","Auto-blocked":"已自动阻止","IP flagged":"IP 已标记","RO":"只读"});
+Object.assign(UI_PATCH.th,{"RBAC Permission Matrix":"เมทริกซ์สิทธิ์ RBAC","Evidence":"หลักฐาน","Billing":"การเรียกเก็บเงิน","Audit":"ตรวจสอบ","Farm Owner":"เจ้าของไซต์","Threat Timeline (24h)":"ไทม์ไลน์ภัยคุกคาม (24 ชม.)","Spike at":"พุ่งสูงเวลา","Failed login ×3":"เข้าสู่ระบบล้มเหลว ×3","Auto-blocked":"บล็อกอัตโนมัติ","IP flagged":"ทำเครื่องหมาย IP","RO":"อ่านอย่างเดียว"});
+Object.assign(UI_PATCH.vi,{"RBAC Permission Matrix":"Ma trận quyền RBAC","Evidence":"Bằng chứng","Billing":"Thanh toán","Audit":"Kiểm toán","Farm Owner":"Chủ cơ sở","Threat Timeline (24h)":"Dòng thời gian đe dọa (24h)","Spike at":"Tăng đột biến lúc","Failed login ×3":"Đăng nhập thất bại ×3","Auto-blocked":"Tự động chặn","IP flagged":"IP bị đánh dấu","RO":"chỉ đọc"});
+Object.assign(UI_PATCH.id,{"RBAC Permission Matrix":"Matriks Izin RBAC","Evidence":"Bukti","Billing":"Penagihan","Audit":"Audit","Farm Owner":"Pemilik Lokasi","Threat Timeline (24h)":"Linimasa Ancaman (24j)","Spike at":"Lonjakan pada","Failed login ×3":"Login gagal ×3","Auto-blocked":"Diblokir otomatis","IP flagged":"IP ditandai","RO":"hanya baca"});
+Object.assign(UI_PATCH.ru,{"RBAC Permission Matrix":"Матрица разрешений RBAC","Evidence":"Доказательства","Billing":"Биллинг","Audit":"Аудит","Farm Owner":"Владелец объекта","Threat Timeline (24h)":"Лента угроз (24 ч)","Spike at":"Пик в","Failed login ×3":"3 неудачных входа","Auto-blocked":"Автоблокировка","IP flagged":"IP помечен","RO":"только чтение"});
+Object.assign(UI_PATCH.ar,{"RBAC Permission Matrix":"مصفوفة صلاحيات RBAC","Evidence":"الأدلة","Billing":"الفواتير","Audit":"التدقيق","Farm Owner":"مالك الموقع","Threat Timeline (24h)":"الخط الزمني للتهديدات (24 ساعة)","Spike at":"ارتفاع عند","Failed login ×3":"فشل تسجيل الدخول ×3","Auto-blocked":"حظر تلقائي","IP flagged":"تم تمييز IP","RO":"قراءة فقط"});
+Object.assign(UI_PATCH.th,{"COMPLIANT":"ปฏิบัติตาม","PENDING":"รอดำเนินการ","nodes":"โหนด"});
+Object.assign(UI_PATCH.vi,{"COMPLIANT":"TUÂN THỦ","PENDING":"ĐANG CHỜ","nodes":"nút"});
+Object.assign(UI_PATCH.id,{"COMPLIANT":"PATUH","PENDING":"TERTUNDA","nodes":"node"});
+Object.assign(UI_PATCH.zh,{"COMPLIANT":"合规","PENDING":"待处理","nodes":"节点"});
+Object.assign(UI_PATCH.ru,{"COMPLIANT":"СООТВЕТСТВУЕТ","PENDING":"ОЖИДАЕТ","nodes":"узлов"});
+Object.assign(UI_PATCH.ar,{"COMPLIANT":"متوافق","PENDING":"قيد الانتظار","nodes":"عقد"});
+
+const TENANT_COPY={
+ko:{title:"데이터 주권 메시",lead:"국가별 데이터 현지 저장 · 본사 통합 관리 · 데이터 주권 보장",arch:"데이터 주권 메시 아키텍처",desc:"국가별 데이터는 해당 국가 클라우드에만 저장됩니다. 본사는 통합 메타데이터만 관리하며 실제 원시 데이터에 접근하지 않습니다.",activeRegions:"활성 지역",planned:"예정",totalNodes:"전체 노드",active:"활성",configuring:"설정 중",nodes:"노드",rules:"데이터 현지 저장 규칙",allCompliant:"전체 준수",country:"국가",storage:"저장 위치 강제",regulation:"규정",status:"상태",hub:"중앙 메타데이터 허브",live:"실시간",central:"중앙은 오직 메타데이터만 관리합니다. 실제 센서 데이터·증거 팩·PDF는 각 국가 리전에 분리 저장됩니다.",meta:"메타 기록",queries:"지역 간 질의",latency:"동기화 지연",isolation:"테넌트 격리",neverLeaves:"데이터 지역 외 이동 금지",enforced:"강제 적용",verified:"100% 검증",full:"5개 활성 지역 전체 준수"},
+en:{title:"Data Sovereign Mesh",lead:"Local data storage by country · Central metadata control · Data sovereignty guaranteed",arch:"Data Sovereign Mesh Architecture",desc:"Each country's data is stored only in its local cloud. HQ manages integrated metadata only and never accesses raw operational data.",activeRegions:"Active Regions",planned:"Planned",totalNodes:"Total Nodes",active:"ACTIVE",configuring:"CONFIGURING",nodes:"nodes",rules:"Data Residency Rules",allCompliant:"ALL COMPLIANT",country:"Country",storage:"Storage Enforcement",regulation:"Regulation",status:"Status",hub:"Central Metadata Hub",live:"LIVE",central:"The central layer manages metadata only. Raw sensor data, evidence packs and PDFs are stored separately in each country region.",meta:"Meta Records",queries:"Cross-Region Queries",latency:"Sync Latency",isolation:"Tenant Isolation",neverLeaves:"Data Never Leaves Region",enforced:"Enforced",verified:"100% verified",full:"Full compliance across all 5 active regions"},
+th:{title:"โครงข่ายอธิปไตยข้อมูล",lead:"จัดเก็บข้อมูลในประเทศ · ควบคุมเมทาดาทาส่วนกลาง · รับประกันอธิปไตยข้อมูล",arch:"สถาปัตยกรรมโครงข่ายอธิปไตยข้อมูล",desc:"ข้อมูลของแต่ละประเทศถูกจัดเก็บเฉพาะในคลาวด์ของประเทศนั้น สำนักงานใหญ่จัดการเฉพาะเมทาดาทารวมและไม่เข้าถึงข้อมูลดิบ",activeRegions:"ภูมิภาคที่ใช้งาน",planned:"วางแผน",totalNodes:"โหนดทั้งหมด",active:"ใช้งาน",configuring:"กำลังกำหนดค่า",nodes:"โหนด",rules:"กฎการจัดเก็บข้อมูลในพื้นที่",allCompliant:"ปฏิบัติตามทั้งหมด",country:"ประเทศ",storage:"การบังคับใช้พื้นที่จัดเก็บ",regulation:"กฎระเบียบ",status:"สถานะ",hub:"ฮับเมทาดาทาส่วนกลาง",live:"สด",central:"ชั้นกลางจัดการเฉพาะเมทาดาทา ข้อมูลเซนเซอร์ แพ็กเกจหลักฐาน และ PDF ถูกจัดเก็บแยกตามภูมิภาคประเทศ",meta:"ระเบียนเมทาดาทา",queries:"คำค้นข้ามภูมิภาค",latency:"เวลาแฝงซิงค์",isolation:"การแยกผู้เช่า",neverLeaves:"ข้อมูลไม่ออกนอกภูมิภาค",enforced:"บังคับใช้",verified:"ตรวจสอบแล้ว 100%",full:"ปฏิบัติตามครบถ้วนใน 5 ภูมิภาคที่ใช้งาน"},
+vi:{title:"Lưới chủ quyền dữ liệu",lead:"Lưu trữ dữ liệu theo quốc gia · Điều phối metadata trung tâm · Bảo đảm chủ quyền dữ liệu",arch:"Kiến trúc lưới chủ quyền dữ liệu",desc:"Dữ liệu của từng quốc gia chỉ được lưu trong cloud nội địa. Trụ sở chỉ quản lý metadata tích hợp và không truy cập dữ liệu thô.",activeRegions:"Vùng hoạt động",planned:"Đã lên kế hoạch",totalNodes:"Tổng nút",active:"HOẠT ĐỘNG",configuring:"ĐANG CẤU HÌNH",nodes:"nút",rules:"Quy tắc lưu trú dữ liệu",allCompliant:"TUÂN THỦ TOÀN BỘ",country:"Quốc gia",storage:"Thực thi lưu trữ",regulation:"Quy định",status:"Trạng thái",hub:"Hub metadata trung tâm",live:"TRỰC TIẾP",central:"Lớp trung tâm chỉ quản lý metadata. Dữ liệu cảm biến thô, gói bằng chứng và PDF được lưu riêng trong từng vùng quốc gia.",meta:"Bản ghi metadata",queries:"Truy vấn liên vùng",latency:"Độ trễ đồng bộ",isolation:"Tách biệt tenant",neverLeaves:"Dữ liệu không rời vùng",enforced:"Đã thực thi",verified:"xác minh 100%",full:"Tuân thủ đầy đủ trên 5 vùng hoạt động"},
+id:{title:"Mesh Kedaulatan Data",lead:"Penyimpanan data lokal per negara · Kontrol metadata pusat · Kedaulatan data terjamin",arch:"Arsitektur Mesh Kedaulatan Data",desc:"Data tiap negara hanya disimpan di cloud lokal negara tersebut. Kantor pusat hanya mengelola metadata terpadu dan tidak mengakses data mentah.",activeRegions:"Wilayah Aktif",planned:"Direncanakan",totalNodes:"Total Node",active:"AKTIF",configuring:"KONFIGURASI",nodes:"node",rules:"Aturan Residensi Data",allCompliant:"SEMUA PATUH",country:"Negara",storage:"Penegakan Penyimpanan",regulation:"Regulasi",status:"Status",hub:"Hub Metadata Pusat",live:"LANGSUNG",central:"Lapisan pusat hanya mengelola metadata. Data sensor mentah, paket bukti, dan PDF disimpan terpisah di wilayah negara masing-masing.",meta:"Catatan Metadata",queries:"Kueri Lintas Wilayah",latency:"Latensi Sinkronisasi",isolation:"Isolasi Tenant",neverLeaves:"Data Tidak Keluar Wilayah",enforced:"Diterapkan",verified:"100% terverifikasi",full:"Kepatuhan penuh di 5 wilayah aktif"},
+zh:{title:"数据主权网格",lead:"按国家本地存储 · 中央元数据管理 · 保障数据主权",arch:"数据主权网格架构",desc:"每个国家的数据只存储在本国云中。总部只管理统一元数据，不访问原始运营数据。",activeRegions:"活跃区域",planned:"计划中",totalNodes:"节点总数",active:"活跃",configuring:"配置中",nodes:"节点",rules:"数据驻留规则",allCompliant:"全部合规",country:"国家",storage:"存储强制策略",regulation:"法规",status:"状态",hub:"中央元数据中心",live:"实时",central:"中央层只管理元数据。原始传感器数据、证据包和 PDF 分别存储在各国家区域。",meta:"元数据记录",queries:"跨区域查询",latency:"同步延迟",isolation:"租户隔离",neverLeaves:"数据不离开区域",enforced:"已强制",verified:"100% 已验证",full:"5 个活跃区域全部合规"},
+ru:{title:"Сеть суверенных данных",lead:"Локальное хранение по странам · Центральное управление метаданными · Гарантия суверенитета данных",arch:"Архитектура сети суверенных данных",desc:"Данные каждой страны хранятся только в ее локальном облаке. Штаб-квартира управляет только метаданными и не имеет доступа к сырым данным.",activeRegions:"Активные регионы",planned:"Запланировано",totalNodes:"Всего узлов",active:"АКТИВНО",configuring:"НАСТРОЙКА",nodes:"узлов",rules:"Правила резидентности данных",allCompliant:"ВСЕ СООТВЕТСТВУЕТ",country:"Страна",storage:"Контроль хранения",regulation:"Регламент",status:"Статус",hub:"Центральный хаб метаданных",live:"LIVE",central:"Центральный слой управляет только метаданными. Сырые данные датчиков, пакеты доказательств и PDF хранятся отдельно в регионах стран.",meta:"Записи метаданных",queries:"Межрегиональные запросы",latency:"Задержка синхронизации",isolation:"Изоляция tenant",neverLeaves:"Данные не покидают регион",enforced:"Принудительно",verified:"100% проверено",full:"Полное соответствие во всех 5 активных регионах"},
+ar:{title:"شبكة سيادة البيانات",lead:"تخزين محلي حسب الدولة · إدارة مركزية للبيانات الوصفية · ضمان سيادة البيانات",arch:"بنية شبكة سيادة البيانات",desc:"تخزن بيانات كل دولة فقط في السحابة المحلية الخاصة بها. يدير المقر البيانات الوصفية فقط ولا يصل إلى البيانات الخام.",activeRegions:"المناطق النشطة",planned:"مخطط",totalNodes:"إجمالي العقد",active:"نشط",configuring:"قيد الإعداد",nodes:"عقد",rules:"قواعد إقامة البيانات",allCompliant:"متوافق بالكامل",country:"الدولة",storage:"فرض التخزين",regulation:"اللائحة",status:"الحالة",hub:"مركز البيانات الوصفية",live:"مباشر",central:"تدير الطبقة المركزية البيانات الوصفية فقط. تحفظ بيانات المستشعر الخام وحزم الأدلة وملفات PDF منفصلة في منطقة كل دولة.",meta:"سجلات البيانات الوصفية",queries:"استعلامات عابرة للمناطق",latency:"زمن مزامنة",isolation:"عزل المستأجر",neverLeaves:"البيانات لا تغادر المنطقة",enforced:"مفعل",verified:"تم التحقق 100%",full:"امتثال كامل عبر 5 مناطق نشطة"}
+};
+const TENANT_REGION_LABELS={
+ko:{countries:{kr:"대한민국",th:"태국",id:"인도네시아",my:"말레이시아",vn:"베트남",sg:"싱가포르 허브",eu:"유럽연합"},providers:{kr:"NHN Cloud Korea · 서울 리전",th:"태국 정부 클라우드 · 방콕 리전",id:"자카르타 리전 · CGK-1",my:"말레이시아 정부 클라우드 · 쿠알라룸푸르",vn:"베트남 데이터센터 · 하노이",sg:"AWS 싱가포르 리전"},storage:{kr:"NHN Cloud Korea 전용",th:"태국 정부 클라우드 전용",id:"자카르타 리전 전용",my:"말레이시아 정부 클라우드 전용",vn:"베트남 데이터센터 전용",eu:"EU 리전 전용"}},
+en:{countries:{kr:"Korea",th:"Thailand",id:"Indonesia",my:"Malaysia",vn:"Vietnam",sg:"Singapore Hub",eu:"EU"},providers:{kr:"NHN Cloud Korea · Seoul region",th:"Thailand Gov Cloud · Bangkok region",id:"Jakarta Region · CGK-1",my:"Malaysia Gov Cloud · Kuala Lumpur",vn:"Vietnam Data Center · Hanoi",sg:"AWS Singapore region"},storage:{kr:"NHN Cloud Korea only",th:"Thailand Gov Cloud only",id:"Jakarta Region only",my:"MY Gov Cloud only",vn:"Vietnam DC only",eu:"EU Region only"}},
+th:{countries:{kr:"เกาหลี",th:"ไทย",id:"อินโดนีเซีย",my:"มาเลเซีย",vn:"เวียดนาม",sg:"ฮับสิงคโปร์",eu:"สหภาพยุโรป"},providers:{kr:"NHN Cloud Korea · รีเจียนโซล",th:"คลาวด์รัฐบาลไทย · รีเจียนกรุงเทพ",id:"รีเจียนจาการ์ตา · CGK-1",my:"คลาวด์รัฐบาลมาเลเซีย · กัวลาลัมเปอร์",vn:"ศูนย์ข้อมูลเวียดนาม · ฮานอย",sg:"AWS รีเจียนสิงคโปร์"},storage:{kr:"เฉพาะ NHN Cloud Korea",th:"เฉพาะคลาวด์รัฐบาลไทย",id:"เฉพาะรีเจียนจาการ์ตา",my:"เฉพาะคลาวด์รัฐบาลมาเลเซีย",vn:"เฉพาะศูนย์ข้อมูลเวียดนาม",eu:"เฉพาะรีเจียนสหภาพยุโรป"}},
+vi:{countries:{kr:"Hàn Quốc",th:"Thái Lan",id:"Indonesia",my:"Malaysia",vn:"Việt Nam",sg:"Hub Singapore",eu:"Liên minh châu Âu"},providers:{kr:"NHN Cloud Korea · vùng Seoul",th:"Cloud chính phủ Thái Lan · vùng Bangkok",id:"Vùng Jakarta · CGK-1",my:"Cloud chính phủ Malaysia · Kuala Lumpur",vn:"Trung tâm dữ liệu Việt Nam · Hà Nội",sg:"AWS vùng Singapore"},storage:{kr:"Chỉ NHN Cloud Korea",th:"Chỉ cloud chính phủ Thái Lan",id:"Chỉ vùng Jakarta",my:"Chỉ cloud chính phủ Malaysia",vn:"Chỉ trung tâm dữ liệu Việt Nam",eu:"Chỉ vùng EU"}},
+id:{countries:{kr:"Korea Selatan",th:"Thailand",id:"Indonesia",my:"Malaysia",vn:"Vietnam",sg:"Hub Singapura",eu:"Uni Eropa"},providers:{kr:"NHN Cloud Korea · wilayah Seoul",th:"Cloud pemerintah Thailand · wilayah Bangkok",id:"Wilayah Jakarta · CGK-1",my:"Cloud pemerintah Malaysia · Kuala Lumpur",vn:"Pusat data Vietnam · Hanoi",sg:"Wilayah AWS Singapura"},storage:{kr:"Khusus NHN Cloud Korea",th:"Khusus cloud pemerintah Thailand",id:"Khusus wilayah Jakarta",my:"Khusus cloud pemerintah Malaysia",vn:"Khusus pusat data Vietnam",eu:"Khusus wilayah Uni Eropa"}},
+zh:{countries:{kr:"韩国",th:"泰国",id:"印度尼西亚",my:"马来西亚",vn:"越南",sg:"新加坡枢纽",eu:"欧盟"},providers:{kr:"NHN Cloud Korea · 首尔区域",th:"泰国政府云 · 曼谷区域",id:"雅加达区域 · CGK-1",my:"马来西亚政府云 · 吉隆坡",vn:"越南数据中心 · 河内",sg:"AWS 新加坡区域"},storage:{kr:"仅限 NHN Cloud Korea",th:"仅限泰国政府云",id:"仅限雅加达区域",my:"仅限马来西亚政府云",vn:"仅限越南数据中心",eu:"仅限欧盟区域"}},
+ru:{countries:{kr:"Корея",th:"Таиланд",id:"Индонезия",my:"Малайзия",vn:"Вьетнам",sg:"Сингапурский хаб",eu:"ЕС"},providers:{kr:"NHN Cloud Korea · регион Сеул",th:"Гос. облако Таиланда · регион Бангкок",id:"Регион Джакарта · CGK-1",my:"Гос. облако Малайзии · Куала-Лумпур",vn:"Дата-центр Вьетнама · Ханой",sg:"AWS регион Сингапур"},storage:{kr:"Только NHN Cloud Korea",th:"Только государственное облако Таиланда",id:"Только регион Джакарта",my:"Только государственное облако Малайзии",vn:"Только дата-центр Вьетнама",eu:"Только регион ЕС"}},
+ar:{countries:{kr:"كوريا",th:"تايلاند",id:"إندونيسيا",my:"ماليزيا",vn:"فيتنام",sg:"مركز سنغافورة",eu:"الاتحاد الأوروبي"},providers:{kr:"NHN Cloud Korea · منطقة سيول",th:"سحابة حكومة تايلاند · منطقة بانكوك",id:"منطقة جاكرتا · CGK-1",my:"سحابة حكومة ماليزيا · كوالالمبور",vn:"مركز بيانات فيتنام · هانوي",sg:"منطقة AWS سنغافورة"},storage:{kr:"NHN Cloud Korea فقط",th:"سحابة حكومة تايلاند فقط",id:"منطقة جاكرتا فقط",my:"سحابة حكومة ماليزيا فقط",vn:"مركز بيانات فيتنام فقط",eu:"منطقة الاتحاد الأوروبي فقط"}}
+};
+const REVENUE_COPY={
+ko:{title:"수익 배분 · 50 / 30 / 20",lead:"탄소 크레딧 수익을 현장, SignalCare, 기술 파트너에게 자동 배분합니다.",formula:{revenue:"탄소 크레딧 수익",trust:"신뢰 점수",owner:"현장 소유자",partners:"기술 파트너"},cards:{farm:"현장 배분 (50%)",farmSub:"이번 달 3개 현장",platform:"SignalCare (30%)",platformSub:"플랫폼 수익",partners:"파트너 (20%)",partnersSub:"ZENOV+NHN+Rebellions",pool:"총 수익 풀",poolSub:"이번 달 총액"},settlement:"현장별 정산",quarter:"2025년 1분기",headers:["현장","tCO₂e","총액","현장 50%","SC 30%","상태"],farms:["현장 알파","현장 베타","현장 델타","현장 세타"],paid:"지급 완료",pending:"대기",processing:"처리 중",partnerSplit:"파트너 수익 배분",partnerRows:{zenov:"ZENOV.io (AI 엔진)",nhn:"NHN Cloud (인프라)",rebellions:"Rebellions (NPU)",data:"데이터 파트너",total:"파트너 합계 (20%)"},growth:"수익 성장",months:["1월","2월","3월","4월","5월","6월","7월"],mom:"전월 대비 성장",annualized:"연환산"},
+en:{title:"Revenue Share · 50 / 30 / 20",lead:"Carbon credit revenue is automatically distributed to site owners, SignalCare and technology partners.",formula:{revenue:"Carbon Credit Revenue",trust:"Trust Score",owner:"Site Owner",partners:"Tech Partners"},cards:{farm:"Site Share (50%)",farmSub:"3 sites this month",platform:"SignalCare (30%)",platformSub:"Platform revenue",partners:"Partners (20%)",partnersSub:"ZENOV+NHN+Rebellions",pool:"Total Pool",poolSub:"Gross this month"},settlement:"Settlement by Site",quarter:"Q1 2025",headers:["Site","tCO₂e","Gross","Site 50%","SC 30%","Status"],farms:["Site Alpha","Site Beta","Site Delta","Site Theta"],paid:"PAID",pending:"PENDING",processing:"PROCESSING",partnerSplit:"Partner Revenue Split",partnerRows:{zenov:"ZENOV.io (AI Engine)",nhn:"NHN Cloud (Infra)",rebellions:"Rebellions (NPU)",data:"Data Partners",total:"Total Partner (20%)"},growth:"Revenue Growth",months:["Jan","Feb","Mar","Apr","May","Jun","Jul"],mom:"MoM Growth",annualized:"Annualized"},
+th:{title:"การแบ่งรายได้ · 50 / 30 / 20",lead:"รายได้จากคาร์บอนเครดิตถูกแบ่งให้เจ้าของไซต์ SignalCare และพันธมิตรเทคโนโลยีโดยอัตโนมัติ",formula:{revenue:"รายได้คาร์บอนเครดิต",trust:"คะแนนความน่าเชื่อถือ",owner:"เจ้าของไซต์",partners:"พันธมิตรเทคโนโลยี"},cards:{farm:"ส่วนแบ่งไซต์ (50%)",farmSub:"3 ไซต์ในเดือนนี้",platform:"SignalCare (30%)",platformSub:"รายได้แพลตฟอร์ม",partners:"พันธมิตร (20%)",partnersSub:"ZENOV+NHN+Rebellions",pool:"พูลรายได้รวม",poolSub:"ยอดรวมเดือนนี้"},settlement:"การชำระตามไซต์",quarter:"ไตรมาส 1 ปี 2025",headers:["ไซต์","tCO₂e","ยอดรวม","ไซต์ 50%","SC 30%","สถานะ"],farms:["ไซต์อัลฟา","ไซต์เบตา","ไซต์เดลตา","ไซต์ธีตา"],paid:"จ่ายแล้ว",pending:"รอดำเนินการ",processing:"กำลังประมวลผล",partnerSplit:"การแบ่งรายได้พันธมิตร",partnerRows:{zenov:"ZENOV.io (เอนจิน AI)",nhn:"NHN Cloud (โครงสร้างพื้นฐาน)",rebellions:"Rebellions (NPU)",data:"พันธมิตรข้อมูล",total:"พันธมิตรรวม (20%)"},growth:"การเติบโตรายได้",months:["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค."],mom:"เติบโตเทียบเดือนก่อน",annualized:"รายปีประมาณการ"},
+vi:{title:"Chia sẻ doanh thu · 50 / 30 / 20",lead:"Doanh thu tín chỉ carbon được tự động phân bổ cho chủ cơ sở, SignalCare và đối tác công nghệ.",formula:{revenue:"Doanh thu tín chỉ carbon",trust:"Điểm tin cậy",owner:"Chủ cơ sở",partners:"Đối tác công nghệ"},cards:{farm:"Phần cơ sở (50%)",farmSub:"3 cơ sở trong tháng này",platform:"SignalCare (30%)",platformSub:"Doanh thu nền tảng",partners:"Đối tác (20%)",partnersSub:"ZENOV+NHN+Rebellions",pool:"Tổng quỹ doanh thu",poolSub:"Tổng tháng này"},settlement:"Quyết toán theo cơ sở",quarter:"Q1 2025",headers:["Cơ sở","tCO₂e","Tổng","Cơ sở 50%","SC 30%","Trạng thái"],farms:["Cơ sở Alpha","Cơ sở Beta","Cơ sở Delta","Cơ sở Theta"],paid:"Đã trả",pending:"Đang chờ",processing:"Đang xử lý",partnerSplit:"Phân bổ doanh thu đối tác",partnerRows:{zenov:"ZENOV.io (AI Engine)",nhn:"NHN Cloud (hạ tầng)",rebellions:"Rebellions (NPU)",data:"Đối tác dữ liệu",total:"Tổng đối tác (20%)"},growth:"Tăng trưởng doanh thu",months:["Th1","Th2","Th3","Th4","Th5","Th6","Th7"],mom:"Tăng trưởng MoM",annualized:"Ước tính năm"},
+id:{title:"Bagi Hasil · 50 / 30 / 20",lead:"Pendapatan kredit karbon otomatis dibagikan kepada pemilik lokasi, SignalCare, dan mitra teknologi.",formula:{revenue:"Pendapatan Kredit Karbon",trust:"Skor Kepercayaan",owner:"Pemilik Lokasi",partners:"Mitra Teknologi"},cards:{farm:"Bagian Lokasi (50%)",farmSub:"3 lokasi bulan ini",platform:"SignalCare (30%)",platformSub:"Pendapatan platform",partners:"Mitra (20%)",partnersSub:"ZENOV+NHN+Rebellions",pool:"Kumpulan Pendapatan",poolSub:"Total bruto bulan ini"},settlement:"Penyelesaian per Lokasi",quarter:"Q1 2025",headers:["Lokasi","tCO₂e","Bruto","Lokasi 50%","SC 30%","Status"],farms:["Lokasi Alpha","Lokasi Beta","Lokasi Delta","Lokasi Theta"],paid:"Dibayar",pending:"Tertunda",processing:"Diproses",partnerSplit:"Pembagian Pendapatan Mitra",partnerRows:{zenov:"ZENOV.io (AI Engine)",nhn:"NHN Cloud (Infra)",rebellions:"Rebellions (NPU)",data:"Mitra Data",total:"Total Mitra (20%)"},growth:"Pertumbuhan Pendapatan",months:["Jan","Feb","Mar","Apr","Mei","Jun","Jul"],mom:"Pertumbuhan MoM",annualized:"Disetahunkan"},
+zh:{title:"收益分配 · 50 / 30 / 20",lead:"碳信用收入自动分配给现场所有者、SignalCare 和技术伙伴。",formula:{revenue:"碳信用收入",trust:"信任评分",owner:"现场所有者",partners:"技术伙伴"},cards:{farm:"现场分成 (50%)",farmSub:"本月 3 个现场",platform:"SignalCare (30%)",platformSub:"平台收入",partners:"伙伴 (20%)",partnersSub:"ZENOV+NHN+Rebellions",pool:"总收益池",poolSub:"本月总额"},settlement:"按现场结算",quarter:"2025 年第一季度",headers:["现场","tCO₂e","总额","现场 50%","SC 30%","状态"],farms:["现场 Alpha","现场 Beta","现场 Delta","现场 Theta"],paid:"已支付",pending:"待处理",processing:"处理中",partnerSplit:"伙伴收益分配",partnerRows:{zenov:"ZENOV.io（AI 引擎）",nhn:"NHN Cloud（基础设施）",rebellions:"Rebellions（NPU）",data:"数据伙伴",total:"伙伴合计 (20%)"},growth:"收益增长",months:["1月","2月","3月","4月","5月","6月","7月"],mom:"环比增长",annualized:"年化"},
+ru:{title:"Распределение выручки · 50 / 30 / 20",lead:"Доход от углеродных кредитов автоматически распределяется между владельцами объектов, SignalCare и технологическими партнерами.",formula:{revenue:"Доход от углеродных кредитов",trust:"Оценка доверия",owner:"Владелец объекта",partners:"Технологические партнеры"},cards:{farm:"Доля объекта (50%)",farmSub:"3 объекта в этом месяце",platform:"SignalCare (30%)",platformSub:"Доход платформы",partners:"Партнеры (20%)",partnersSub:"ZENOV+NHN+Rebellions",pool:"Общий пул",poolSub:"Валовой доход месяца"},settlement:"Расчеты по объектам",quarter:"1 кв. 2025",headers:["Объект","tCO₂e","Валовая сумма","Объект 50%","SC 30%","Статус"],farms:["Объект Alpha","Объект Beta","Объект Delta","Объект Theta"],paid:"Оплачено",pending:"Ожидает",processing:"Обработка",partnerSplit:"Распределение дохода партнеров",partnerRows:{zenov:"ZENOV.io (AI-движок)",nhn:"NHN Cloud (инфраструктура)",rebellions:"Rebellions (NPU)",data:"Партнеры данных",total:"Итого партнеры (20%)"},growth:"Рост выручки",months:["Янв","Фев","Мар","Апр","Май","Июн","Июл"],mom:"Рост MoM",annualized:"В годовом выражении"},
+ar:{title:"توزيع الإيرادات · 50 / 30 / 20",lead:"يتم توزيع إيرادات أرصدة الكربون تلقائيا على مالكي المواقع و SignalCare وشركاء التقنية.",formula:{revenue:"إيرادات أرصدة الكربون",trust:"درجة الثقة",owner:"مالك الموقع",partners:"شركاء التقنية"},cards:{farm:"حصة الموقع (50%)",farmSub:"3 مواقع هذا الشهر",platform:"SignalCare (30%)",platformSub:"إيرادات المنصة",partners:"الشركاء (20%)",partnersSub:"ZENOV+NHN+Rebellions",pool:"إجمالي مجمع الإيرادات",poolSub:"إجمالي هذا الشهر"},settlement:"التسوية حسب الموقع",quarter:"الربع الأول 2025",headers:["الموقع","tCO₂e","الإجمالي","الموقع 50%","SC 30%","الحالة"],farms:["موقع ألفا","موقع بيتا","موقع دلتا","موقع ثيتا"],paid:"مدفوع",pending:"قيد الانتظار",processing:"قيد المعالجة",partnerSplit:"توزيع إيرادات الشركاء",partnerRows:{zenov:"ZENOV.io (محرك AI)",nhn:"NHN Cloud (البنية التحتية)",rebellions:"Rebellions (NPU)",data:"شركاء البيانات",total:"إجمالي الشركاء (20%)"},growth:"نمو الإيرادات",months:["ينا","فبر","مار","أبر","ماي","يون","يول"],mom:"النمو الشهري",annualized:"سنوي تقديري"}
+};
+
+/* ─── Currency ─── */
+const CUR={
+  USD:{s:"$",l:"USD",a:"$85,420",f:"$12.4k",st:"$42,710"},
+  EUR:{s:"€",l:"EUR",a:"€79,270",f:"€11.5k",st:"€39,635"},
+  KRW:{s:"₩",l:"KRW",a:"₩114M",f:"₩16.6M",st:"₩57.2M"},
+  THB:{s:"฿",l:"THB",a:"฿3.12M",f:"฿452k",st:"฿1.56M"},
+  MYR:{s:"RM",l:"MYR",a:"RM403k",f:"RM58.5k",st:"RM201k"},
+  IDR:{s:"Rp",l:"IDR",a:"Rp1.35B",f:"Rp196M",st:"Rp675M"},
+  VND:{s:"₫",l:"VND",a:"₫2.14T",f:"₫312M",st:"₫1.07T"},
+};
+
+/* ─── Nav structure ─── */
+const NAV=[
+  {sec:"navCore",items:[{k:"dashboard",i:"◈"},{k:"farms",i:"🌾"},{k:"evidence",i:"🔐"},{k:"compliance",i:"📋"},{k:"asset",i:"◉"},{k:"settlement",i:"💰"},{k:"reports",i:"📊"}]},
+  {sec:"navEnt",items:[{k:"carbonMap",i:"🗺",nb:{t:"NEW",c:"nb-ac"}},{k:"billing",i:"⚡"},{k:"auditLogs",i:"🔍",nb:{t:"P0",c:"nb-gn"}},{k:"security",i:"🛡",nb:{t:"P0.5",c:"nb-vi"}},{k:"tenantRegions",i:"🌏"},{k:"revenueShare",i:"📈"}]},
+  {sec:"navSys",items:[{k:"settings",i:"⚙"}]},
+];
+
+/* ─── State ─── */
+const ST={lang:"en",cur:"USD",page:"dashboard",mini:false,liveAsset:85420,liveCH4:14.23};
+
+/* ─── Accessors ─── */
+const L=()=>LANG[ST.lang]||LANG.en;
+const C=()=>CUR[ST.cur]||CUR.USD;
+const t=k=>L().c[k]||k;
+const nt=k=>L().nav[k]||k;
+const pt=(pg,k)=>L().pg[pg]?.[k]||"";
+
+function patchTextNode(text){
+  const map=UI_PATCH[ST.lang];
+  if(!map||ST.lang==="en")return text;
+  let out=text;
+  Object.keys(map).sort((a,b)=>b.length-a.length).forEach(k=>{out=out.split(k).join(map[k]);});
+  return out;
+}
+function applyDashboardLanguage(){
+  const root=document.body;
+  if(!root)return;
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
+    acceptNode(node){
+      const p=node.parentElement;
+      if(!p||["SCRIPT","STYLE","TEXTAREA","INPUT","SELECT","OPTION"].includes(p.tagName))return NodeFilter.FILTER_REJECT;
+      if(!node.nodeValue||!node.nodeValue.trim())return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const nodes=[];
+  while(walker.nextNode())nodes.push(walker.currentNode);
+  nodes.forEach(n=>{const v=patchTextNode(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v;});
+}
+
+/* ─── Utils ─── */
+const s8=()=>Array.from({length:8},()=>"0123456789abcdef"[Math.floor(Math.random()*16)]).join("");
+const s64=()=>Array.from({length:64},()=>"0123456789abcdef"[Math.floor(Math.random()*16)]).join("");
+const ts=()=>new Date().toTimeString().slice(0,8);
+
+/* ─── UI Helpers ─── */
+const kc=(ico,lbl,val,col,sub,tr="up")=>`<div class="kc fu"><div class="kc-top"><div class="kc-lbl">${lbl}</div><span class="kc-ico">${ico}</span></div><div class="kc-num" style="color:${col}">${val}</div><div class="kc-sub ${tr}">${sub}</div></div>`;
+const sr=(l,v,c="var(--t1)")=>`<div class="sr"><span class="sr-l">${l}</span><span class="sr-v" style="color:${c}">${v}</span></div>`;
+const bd=(txt,cls,dot=false)=>`<span class="bd ${dot?"dot":""} ${cls}">${txt}</span>`;
+const ms=(l,v,c)=>`<div class="ms"><div class="ms-l">${l}</div><div class="ms-v" style="color:${c}">${v}</div></div>`;
+const rvBar=r=>`<div class="rvb"><div class="rvs" style="width:50%;background:var(--ac);color:#000">${r.headers[3]}</div><div class="rvs" style="width:30%;background:var(--cy);color:#000">${r.headers[4]}</div><div class="rvs" style="width:20%;background:var(--vi);color:#fff">${r.cards.partners.replace(" (20%)","")} 20%</div></div>`;
+const grids=(n=4,W=500,H=160)=>{let s="";for(let i=1;i<=n;i++)s+=`<line x1="0" y1="${H/n*i}" x2="${W}" y2="${H/n*i}" class="gl"/>`;for(let i=1;i<=4;i++)s+=`<line x1="${W/4*i}" y1="0" x2="${W/4*i}" y2="${H}" class="gl"/>`;return s;};
+const planCard=(name,type,price,per,feats,col,feat,cta,url,rec)=>`<div class="pc ${feat?"feat":""}"><div style="display:flex;flex-direction:column;height:100%">${feat?`<div class="pc-top">${rec||"RECOMMENDED"}</div>`:""}<div class="pc-name" style="color:${col}">${name}</div><div class="pc-type">${type}</div><div class="pc-price" style="color:${col}">${price}</div><div class="pc-per">${per}</div><div class="pc-feat">${feats.split("\n").map(f=>`✓ ${f}`).join("<br>")}</div><a class="pc-cta ${feat?"":"alt"}" href="${url}">${cta}</a></div></div>`;
+const tRow=(...cells)=>`<tr>${cells.map((c,i)=>i===0?`<td style="font-weight:600">${c}</td>`:`<td>${c}</td>`).join("")}</tr>`;
+const rbacRow=(role,...perms)=>`<tr><td style="font-weight:600">${role}</td>${perms.map(p=>`<td style="text-align:center;font-weight:700;color:${p.startsWith("✓")?"var(--gn)":"var(--t3)"}">${p}</td>`).join("")}</tr>`;
+const residRow=(ctry,rule,law,ok)=>`<tr><td>${ctry}</td><td style="font-size:9.5px;color:var(--t2)">${rule}</td><td>${bd(law,"bd-cy")}</td><td>${bd(ok?"COMPLIANT":"PENDING",ok?"bd-gn":"bd-gd")}</td></tr>`;
+const settlRow=(farm,tco2,gross,share,sc,stcls,r)=>`<tr><td style="font-weight:600">${farm}</td><td class="mono" style="color:var(--t2)">${tco2} t</td><td class="mono">${gross}</td><td class="mono" style="color:var(--ac);font-weight:700">${share}</td><td class="mono" style="color:var(--cy)">${sc}</td><td>${bd(stcls==="bd-gn"?r.paid:stcls==="bd-gd"?r.pending:r.processing,stcls)}</td></tr>`;
+const bilRow=(tenant,plan,mo,cr,tot,stcls)=>`<tr><td style="font-weight:600">${tenant}</td><td>${bd(plan,"bd-cy")}</td><td class="mono" style="color:var(--ac)">${mo}</td><td class="mono" style="color:var(--gn)">${cr}</td><td class="mono" style="font-weight:700">${tot}</td><td>${bd("ACTIVE",stcls)}</td></tr>`;
+const rBar=(name,pct,val,col)=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:9.5px;margin-bottom:3px"><span style="color:var(--t2)">${name}</span><span style="color:${col};font-family:var(--fm);font-weight:700">${val}</span></div><div class="pg"><div class="pf" style="width:${pct}%;background:${col}"></div></div></div>`;
+const miniStat2=(l,v,c)=>`<div style="background:var(--s3);border:1px solid var(--b1);border-radius:7px;padding:8px 10px"><div style="font-size:7px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--t2);font-family:var(--fm);margin-bottom:2px">${l}</div><div style="font-size:12px;font-weight:700;color:${c};font-family:var(--fm)">${v}</div></div>`;
+const aiRT=()=>[["⚡","Rebellions NPU",82,"var(--ac)"],["🟩","NVIDIA GPU",67,"var(--gn)"],["🔷","Furiosa NPU",44,"var(--vi)"],["💻","CPU",21,"var(--cy)"]].map(([i,n,p,c])=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(24,28,56,.4)"><span style="font-size:13px">${i}</span><div style="flex:1"><div style="font-size:10px;font-weight:600;margin-bottom:3px">${n}</div><div class="pg"><div class="pf" style="width:${p}%;background:${c}"></div></div></div><span style="font-family:var(--fm);font-size:9px;color:${c};width:26px;text-align:right">${p}%</span></div>`).join("");
+const tenantMini=()=>{const rl=TENANT_REGION_LABELS[ST.lang]||TENANT_REGION_LABELS.ko,tc=TENANT_COPY[ST.lang]||TENANT_COPY.ko;return[["🇰🇷","kr","bd-gn",14],["🇹🇭","th","bd-ac",11],["🇮🇩","id","bd-gd",9],["🇲🇾","my","bd-gn",5]].map(([f,k,s,c])=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(24,28,56,.4)"><span style="font-size:15px">${f}</span><div style="flex:1"><div style="font-size:10px;font-weight:600">${rl.countries[k]}</div><div style="font-size:8px;color:var(--t2);font-family:var(--fm)">${rl.providers[k]}</div></div>${bd(`${c} ${tc.nodes}`,s)}</div>`).join("");};
+</script>
+
+<!-- HTML SHELL -->
+<div class="shell">
+<nav class="sidebar" id="SB">
+  <div class="brand">
+    <div class="brand-mark">S</div>
+    <div><div class="brand-name">SIGNAL<em>CARE</em>.ltd</div><div class="brand-tag">Carbon Data OS v4 Enterprise</div></div>
+  </div>
+  <button class="sb-tog" id="sbTog" onclick="toggleSB()">◀</button>
+  <div class="nav-wrap" id="navWrap"></div>
+  <div class="sf">
+    <div class="sf-live sf-txt" id="sfLive">41 NODES ACTIVE</div>
+    <div class="sf-sys sf-txt" id="sfSys">OP: NORMAL</div>
+  </div>
+</nav>
+
+<div class="main" id="MA">
+  <header class="topbar">
+    <div class="tb-l">
+      <div>
+        <div class="tb-pg" id="tbTitle">Paid Service Demo Version</div>
+        <div class="tb-bc">signalcare.ltd › <span id="tbCrumb">paid service demo</span></div>
+      </div>
+    </div>
+    <div class="tb-r">
+      <a class="tb-btn" href="/">← Site</a>
+      <button class="tb-btn" onclick="logout()">Log out</button>
+      <div class="tb-hash" id="tbHash"></div>
+      <select class="tb-sel" id="langSel" onchange="setLang(this.value)">
+        <option value="en">🇺🇸 EN</option><option value="ko">🇰🇷 KO</option>
+        <option value="th">🇹🇭 TH</option><option value="vi">🇻🇳 VI</option>
+        <option value="id">🇮🇩 ID</option><option value="ar">🇸🇦 AR</option>
+        <option value="zh">🇨🇳 ZH</option><option value="ru">🇷🇺 RU</option>
+      </select>
+      <select class="tb-cur" id="curSel" onchange="setCur(this.value)">
+        <option>USD</option><option>EUR</option><option>KRW</option>
+        <option>THB</option><option>MYR</option><option>IDR</option><option>VND</option>
+      </select>
+      <button class="tb-btn pri" onclick="goPage('evidence')">+ Evidence Pack</button>
+    </div>
+  </header>
+  <div class="cnt" id="PC"></div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+  PAGE RENDERERS + ROUTER + LIVE ENGINE
+══════════════════════════════════════════ -->
+<script>
+/* ════════════════════ DASHBOARD ════════════════════ */
+function pgDashboard(){const cu=C();return`
+<div class="krow k6 fu d0">
+  ${kc("◈",t("av"),cu.a,"var(--ac)","↑ 9.2% vs prev")}
+  ${kc("🌿",t("ve"),"3,126 tCO₂e","var(--gn)","↑ 14.8% FCR")}
+  ${kc("🌾",t("fs"),cu.f,"var(--gd)","FCR −14.8%")}
+  ${kc("🔐",t("hs"),"3.4","var(--vi)","14,820 total")}
+  ${kc("🛡",t("tr"),"97.4%","var(--cy)","↑ 0.3%")}
+  ${kc("⚡",t("la"),"34 ms","var(--gn)","p99 < 50ms")}
+</div>
+<div class="g21 fu d1">
+  <div class="card">
+    <div class="ch">
+      <div><div class="ct"><span style="color:var(--ac)">◈</span> Live Sensor Stream</div><div class="cs">PILOT_SITE_01 · CH₄ · CO₂ · Flow · Power · Real-time ingestion</div></div>
+      <div style="display:flex;gap:6px;align-items:center">${bd(t("live"),"bd-ac",true)}<span style="font-family:var(--fm);font-size:9px;color:var(--t2)" id="dCH4">CH₄ 14.23 ppm</span></div>
+    </div>
+    <div class="cb">
+      <div class="cw" style="height:156px">
+        <svg viewBox="0 0 500 140" preserveAspectRatio="none" role="img" aria-label="Sensor chart">
+          ${grids(4,500,140)}
+          <path d="M0,108 L45,98 L90,82 L135,92 L180,64 L225,58 L270,40 L315,26 L360,31 L405,12 L450,16 L500,10 L500,140 L0,140Z" class="ca-ac"/>
+          <path d="M0,108 L45,98 L90,82 L135,92 L180,64 L225,58 L270,40 L315,26 L360,31 L405,12 L450,16 L500,10" class="cl-ac dac"/>
+          <path d="M0,118 L45,114 L90,106 L135,110 L180,96 L225,92 L270,78 L315,66 L360,71 L405,54 L450,58 L500,50" class="cl-cy dcy"/>
+          <text x="4" y="13" class="ax">16</text><text x="4" y="48" class="ax">12</text><text x="4" y="83" class="ax">8</text><text x="4" y="118" class="ax">4</text>
+          <text x="88" y="138" class="ax">Q1</text><text x="218" y="138" class="ax">Q2</text><text x="352" y="138" class="ax">Q3</text><text x="458" y="138" class="ax">Q4</text>
+          <circle cx="315" cy="26" r="3.5" fill="var(--bg)" stroke="var(--t1)" stroke-width="1.8" id="pkDot" style="opacity:0;transition:opacity .4s 2.2s"/>
+          <circle cx="450" cy="16" r="3.5" fill="var(--bg)" stroke="var(--ac)" stroke-width="1.8" id="ltDot" style="opacity:0;transition:opacity .4s 2.5s"/>
+          <line x1="315" y1="26" x2="315" y2="4" stroke="var(--b2)" stroke-width="1" stroke-dasharray="3,3" id="pkLn" style="opacity:0;transition:opacity .4s 2.3s"/>
+          <text x="320" y="8" style="fill:var(--t2);font-family:var(--fm);font-size:8px;font-weight:600;opacity:0;transition:opacity .4s 2.6s" id="pkTxt">${t("py")}</text>
+        </svg>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;margin-top:10px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:5px;font-size:9px;color:var(--t2)"><span style="width:12px;height:2.5px;background:var(--ac);display:inline-block;border-radius:1px"></span>CH₄</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:9px;color:var(--t2)"><span style="width:12px;height:2px;background:var(--cy);display:inline-block;border-radius:1px"></span>CO₂</div>
+        <div style="margin-left:auto;display:flex;gap:16px">
+          ${[["var(--gd)",t("fs"),cu.f],["var(--ac)","tCO₂e","3,126 t"],["var(--cy)",t("rs"),cu.st]].map(([c,l,v])=>`<div style="text-align:center"><div style="font-size:8px;color:var(--t2);font-family:var(--fm)">${l}</div><div style="font-size:13px;font-weight:700;color:${c}">${v}</div></div>`).join("")}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card">
+      <div class="ch"><div class="ct"><span style="color:var(--ac)">💎</span> ${t("av")}</div>${bd(t("live"),"bd-ac",true)}</div>
+      <div class="cb">
+        <div style="font-size:8.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--t2);font-family:var(--fm);margin-bottom:7px">${t("av")}</div>
+        <div style="font-size:clamp(24px,3.2vw,38px);font-weight:700;letter-spacing:-.04em;color:var(--ac);font-variant-numeric:tabular-nums;line-height:1;margin-bottom:5px;animation:ci .5s var(--ez)" id="dAsset">${cu.a}</div>
+        <div style="font-size:9px;color:rgba(198,241,53,.45);margin-bottom:14px">≈ 3,126 tCO₂e · Trust 97.4%</div>
+        ${rvBar()}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px">
+          ${ms("CBAM","✓ ISO 14064","var(--cy)")} ${ms("Settlement","6 Pending","var(--gd)")}
+          ${ms("ESG Score","88 / 100","var(--gn)")} ${ms("Hash/sec","3.4","var(--vi)")}
+        </div>
+      </div>
+    </div>
+    <div class="card" style="flex:1">
+      <div class="ch"><div class="ct"><span style="color:var(--gn)">🔐</span> Live SHA-256 Stream</div>${bd("LIVE","bd-gn",true)}</div>
+      <div class="cb" style="padding-top:10px"><div class="hs" id="hashStream" style="max-height:130px"></div></div>
+    </div>
+  </div>
+</div>
+<div class="g3 fu d2">
+  <div class="card"><div class="ch"><div class="ct"><span style="color:var(--vi)">⚡</span> AI Runtime</div>${bd("NVIDIA","bd-vi")}</div><div class="cb">${aiRT()}</div></div>
+  <div class="card"><div class="ch"><div class="ct"><span style="color:var(--cy)">🌏</span> ${nt("tenantRegions")}</div>${bd(t("sov"),"bd-cy")}</div><div class="cb">${tenantMini()}</div></div>
+  <div class="card"><div class="ch"><div class="ct"><span style="color:var(--gd)">📋</span> Evidence Integrity</div>${bd("P0","bd-gn")}</div><div class="cb">${sr(t("vn"),"✓ 100%","var(--gn)")}${sr(t("bv"),"41 / 41","var(--ac)")}${sr(t("cf"),"14,820 packs","var(--t1)")}${sr("Tamper Detected","0","var(--gn)")}${sr(t("la"),"34 ms","var(--cy)")}<div class="pg pg5" style="margin-top:10px"><div class="pf" style="width:100%;background:var(--gn)"></div></div><div style="font-size:8px;color:var(--t2);font-family:var(--fm);margin-top:4px">${t("sd")}</div></div></div>
+</div>`;}
+
+/* ════════════════════ NATIONAL CARBON MAP ════════════════════ */
+function pgCarbonMap(){const cu=C(),m=MAP_COPY[ST.lang]||MAP_COPY.ko;return`
+<div class="fu d0" style="margin-bottom:16px">
+  <div style="font-size:18px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px">${m.title}</div>
+  <div style="font-size:10px;color:var(--t2);font-family:var(--fm)">${m.lead}</div>
+</div>
+<div class="g12 fu d1">
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card">
+      <div class="ch"><div class="ct">${m.stats}</div>${bd(t("live"),"bd-ac",true)}</div>
+      <div class="cb">
+        ${sr(m.nodes,"41 / 42","var(--ac)")}${sr(m.reduced,"3,126 t","var(--gn)")}${sr(m.asset,cu.a,"var(--ac)")}${sr(m.trust,"97.4%","var(--gn)")}${sr(m.cbam,"38 / 41","var(--gd)")}${sr(m.leaks,m.minor,"var(--gd)")}
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--b1)">
+          <div style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);font-family:var(--fm);margin-bottom:10px">${m.byRegion}</div>
+          ${rBar("🇰🇷 Gyeonggi, KR",78,cu.s+"29k","var(--ac)")}
+          ${rBar("🇹🇭 Chiang Mai, TH",62,cu.s+"24k","var(--cy)")}
+          ${rBar("🇻🇳 Mekong, VN",48,cu.s+"18k","var(--gn)")}
+          ${rBar("🇮🇩 Sumatra, ID",32,cu.s+"12k","var(--gd)")}
+          ${rBar("🇲🇾 Selangor, MY",20,cu.s+"8k","var(--vi)")}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">⚠ ${m.alerts}</div>${bd(m.active,"bd-gd")}</div>
+      <div class="cb">
+        <div class="abox" style="background:var(--gd2);border:1px solid rgba(240,192,64,.2)"><h4 style="color:var(--gd)">VN-MK-0088 · ${m.drift}</h4><p>${m.driftMsg}</p></div>
+        <div class="abox" style="background:var(--rd2);border:1px solid rgba(255,69,96,.2)"><h4 style="color:var(--rd)">BR-CE-0019 · ${m.offline}</h4><p>${m.offlineMsg}</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch">
+      <div><div class="ct">${m.network}</div><div class="cs">${m.networkSub}</div></div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">${bd(m.optimal,"bd-gn")} ${bd(m.warning,"bd-gd")} ${bd(m.alert,"bd-rd")}</div>
+    </div>
+    <svg viewBox="0 0 720 390" style="width:100%;display:block;background:var(--s0)" role="img" aria-label="National carbon map">
+      ${[60,120,180,240,300,360].map(y=>`<line x1="0" y1="${y}" x2="720" y2="${y}" stroke="rgba(24,28,56,.5)" stroke-width="1"/>`).join("")}
+      ${[72,144,216,288,360,432,504,576,648].map(x=>`<line x1="${x}" y1="0" x2="${x}" y2="390" stroke="rgba(24,28,56,.5)" stroke-width="1"/>`).join("")}
+      <ellipse cx="540" cy="158" rx="20" ry="30" fill="rgba(20,22,44,.92)" stroke="rgba(198,241,53,.28)" stroke-width="1.5"/>
+      <ellipse cx="548" cy="172" rx="10" ry="18" fill="rgba(20,22,44,.92)" stroke="rgba(198,241,53,.15)" stroke-width="1"/>
+      <ellipse cx="484" cy="214" rx="17" ry="26" fill="rgba(20,22,44,.92)" stroke="rgba(0,208,255,.18)" stroke-width="1"/>
+      <ellipse cx="512" cy="228" rx="9" ry="30" fill="rgba(20,22,44,.92)" stroke="rgba(46,204,113,.14)" stroke-width="1"/>
+      <ellipse cx="532" cy="278" rx="42" ry="17" fill="rgba(20,22,44,.92)" stroke="rgba(240,192,64,.16)" stroke-width="1"/>
+      <ellipse cx="498" cy="255" rx="21" ry="11" fill="rgba(20,22,44,.92)" stroke="rgba(155,125,255,.14)" stroke-width="1"/>
+      <!-- KR nodes -->
+      <circle cx="541" cy="148" r="12" fill="var(--ac)" opacity=".09"/><circle cx="541" cy="148" r="12" fill="var(--ac)" opacity=".08" style="animation:mp 2.5s ease-in-out infinite"/><circle cx="541" cy="148" r="5" fill="var(--ac)" opacity=".92"/>
+      <text x="553" y="153" fill="rgba(238,240,255,.65)" font-size="8" font-family="var(--fm)">KR-GG-0041</text>
+      <circle cx="548" cy="168" r="5" fill="var(--ac)" opacity=".75"/>
+      <text x="555" y="173" fill="rgba(238,240,255,.5)" font-size="7.5" font-family="var(--fm)">KR-JJ-0055</text>
+      <!-- TH node -->
+      <circle cx="484" cy="208" r="12" fill="var(--cy)" opacity=".09"/><circle cx="484" cy="208" r="5" fill="var(--cy)" opacity=".88"/>
+      <text x="496" y="213" fill="rgba(238,240,255,.65)" font-size="8" font-family="var(--fm)">TH-CM-0031</text>
+      <!-- VN node WARNING -->
+      <circle cx="514" cy="228" r="12" fill="var(--gd)" opacity=".09"/><circle cx="514" cy="228" r="5" fill="var(--gd)" opacity=".88" style="animation:mp 2s ease-in-out infinite"/>
+      <text x="526" y="233" fill="rgba(238,240,255,.65)" font-size="8" font-family="var(--fm)">VN-MK-0088 ⚠</text>
+      <!-- ID node ALERT -->
+      <circle cx="532" cy="273" r="12" fill="var(--rd)" opacity=".09"/><circle cx="532" cy="273" r="5" fill="var(--rd)" opacity=".88"/>
+      <text x="544" y="278" fill="rgba(238,240,255,.65)" font-size="8" font-family="var(--fm)">ID-SU-0072 ✗</text>
+      <!-- MY node -->
+      <circle cx="499" cy="251" r="5" fill="var(--vi)" opacity=".85"/>
+      <text x="511" y="256" fill="rgba(238,240,255,.5)" font-size="7.5" font-family="var(--fm)">MY-SL-0019</text>
+      <!-- Stat overlay -->
+      <rect x="8" y="8" width="152" height="66" rx="8" fill="rgba(6,8,16,.9)" stroke="rgba(24,28,56,.8)" stroke-width="1"/>
+      <text x="18" y="26" fill="rgba(110,114,168,.8)" font-size="7.5" font-family="var(--fm)" font-weight="700" letter-spacing=".08em">${m.totalReduction}</text>
+      <text x="18" y="46" fill="var(--ac)" font-size="20" font-family="var(--fm)" font-weight="700">3,126 tCO₂e</text>
+      <text x="18" y="62" fill="rgba(110,114,168,.7)" font-size="8" font-family="var(--fm)">${m.assetLabel} ${C().a}</text>
+      <text x="8" y="382" fill="rgba(110,114,168,.4)" font-size="7.5" font-family="var(--fm)">${m.footer}</text>
+    </svg>
+  </div>
+</div>`;}
+
+/* ════════════════════ BILLING ════════════════════ */
+function pgBilling(){const b=BILLING_COPY[ST.lang]||BILLING_COPY.ko;return`
+<div class="fu d0" style="margin-bottom:16px">
+  <div style="font-size:24px;font-weight:850;letter-spacing:-.02em;margin-bottom:6px">${b.title}</div>
+  <div style="font-size:13px;color:var(--t2);line-height:1.7">${b.lead}</div>
+</div>
+<div class="g3 fu d2">
+  ${b.plans.map(p=>planCard(p.n,p.type,p.price,p.per,p.feats.join("\n"),p.col,p.feat,p.cta,p.url,p.rec)).join("")}
+</div>`;}
+
+/* ════════════════════ AUDIT LOGS ════════════════════ */
+function pgAuditLogs(){
+  const evs=[
+    {i:"🔐",bg:"var(--gn2)",a:"Evidence Pack Generated",ac:"system",f:"Farm Alpha",sv:"INFO"},
+    {i:"📄",bg:"var(--cy2)",a:"CBAM PDF Downloaded",ac:"user:admin",f:"Farm Alpha",sv:"INFO"},
+    {i:"💰",bg:"var(--gd2)",a:"Settlement Executed",ac:"user:finance",f:"Farm Beta",sv:"WARN"},
+    {i:"🔑",bg:"var(--vi2)",a:"API Key Rotated",ac:"user:admin",f:"Global",sv:"INFO"},
+    {i:"🔍",bg:"var(--cy2)",a:"Evidence Pack Viewed",ac:"user:auditor",f:"Farm Delta",sv:"INFO"},
+    {i:"🛡",bg:"var(--gn2)",a:"Security Scan Completed",ac:"system",f:"Global",sv:"INFO"},
+    {i:"⚠️",bg:"var(--rd2)",a:"Failed Login Attempt ×3",ac:"unknown:41.x.x.x",f:"—",sv:"CRIT"},
+    {i:"🔐",bg:"var(--gn2)",a:"Tamper Check Passed",ac:"system",f:"Farm Beta",sv:"INFO"},
+    {i:"📋",bg:"var(--vi2)",a:"ISO 14064 Report Generated",ac:"user:auditor",f:"Farm Alpha",sv:"INFO"},
+    {i:"🌍",bg:"var(--cy2)",a:"Tenant Residency Verified",ac:"system",f:"KR-Region",sv:"INFO"},
+  ];
+  const svCls={INFO:"bd-cy",WARN:"bd-gd",CRIT:"bd-rd"};
+  return`
+<div class="fu d0" style="margin-bottom:16px">
+  <div style="font-size:18px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px">${pt("auditLogs","t")}</div>
+  <div style="font-size:10px;color:var(--t2);font-family:var(--fm)">${pt("auditLogs","s")||"All activity cryptographically sealed — ISO 27001 · GDPR · SOC 2 compliant"}</div>
+</div>
+<div class="krow k4 fu d1">
+  ${kc("📋","Total Logs Today","1,284","var(--vi)","All SHA-256 sealed")}
+  ${kc("🔐","Evidence Events","482","var(--ac)","42% of total")}
+  ${kc("⚠️","Warnings","3","var(--gd)","Needs review")}
+  ${kc("🚨","Critical Alerts","1","var(--rd)","Login anomaly")}
+</div>
+<div class="card fu d2">
+  <div class="ch">
+    <div><div class="ct">Immutable Audit Trail</div><div class="cs">Every entry SHA-256 sealed · ISO 27001 · GDPR Art.30 · SOC 2 compliant</div></div>
+    <div style="display:flex;gap:7px"><button class="tb-btn">⬇ Export CSV</button><button class="tb-btn">Filter</button></div>
+  </div>
+  <div class="cb0">
+    <table class="tbl">
+      <thead><tr><th>Event</th><th>Actor</th><th>Farm / Scope</th><th>SHA-256 Seal</th><th>Severity</th><th>Timestamp</th></tr></thead>
+      <tbody>${evs.map(e=>`<tr>
+        <td><span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;background:${e.bg};margin-right:7px;font-size:11px">${e.i}</span><span style="font-weight:600">${e.a}</span></td>
+        <td class="mono" style="font-size:9px;color:var(--t2)">${e.ac}</td>
+        <td style="font-size:11px;color:var(--t2)">${e.f}</td>
+        <td class="hcell">${s64().slice(0,16)}…</td>
+        <td>${bd(e.sv,svCls[e.sv])}</td>
+        <td class="mono" style="font-size:9px;color:var(--t2)">${ts()}</td>
+      </tr>`).join("")}</tbody>
+    </table>
+  </div>
+</div>`;}
+
+/* ════════════════════ SECURITY CENTER ════════════════════ */
+function pgSecurity(){
+  const checks=[
+    {i:"🔒",l:"Tenant Data Isolation (Row-Level Security)",s:"PASS"},
+    {i:"🔑",l:"Encryption at Rest — AES-256",s:"PASS"},
+    {i:"🌐",l:"Encryption in Transit — TLS 1.3",s:"PASS"},
+    {i:"👤",l:"RBAC Access Control",s:"PASS"},
+    {i:"🚫",l:"DLP — Data Loss Prevention",s:"WARN"},
+    {i:"📡",l:"API Rate Limiting & Throttling",s:"PASS"},
+    {i:"💉",l:"SQL Injection Protection",s:"PASS"},
+    {i:"🛡",l:"XSS / CSRF Protection",s:"PASS"},
+    {i:"📝",l:"Audit Log Integrity (Append-Only)",s:"PASS"},
+    {i:"🔐",l:"SHA-256 Seal Verification",s:"PASS"},
+    {i:"🌍",l:"Cross-Region Data Leakage Test",s:"WARN"},
+    {i:"⚡",l:"JWT Token Security & Rotation",s:"PASS"},
+  ];
+  const pass=checks.filter(c=>c.s==="PASS").length;
+  return`
+<div class="fu d0" style="margin-bottom:16px">
+  <div style="font-size:18px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px">${pt("security","t")}</div>
+  <div style="font-size:10px;color:var(--t2);font-family:var(--fm)">${pt("security","s")||"Tenant isolation · AES-256 · DLP · RBAC verification"}</div>
+</div>
+<div class="krow k4 fu d1">
+  ${kc("✅","Tests Passed",`${pass} / ${checks.length}`,"var(--gn)",`${Math.round(pass/checks.length*100)}% pass rate`)}
+  ${kc("⚠️","Warnings","2","var(--gd)","Action required")}
+  ${kc("🔒","Encryption","AES-256","var(--cy)","TLS 1.3 enforced")}
+  ${kc("🕐","Last Scan",ts(),"var(--vi)","Auto every 4h")}
+</div>
+<div class="g2 fu d2">
+  <div class="card">
+    <div class="ch"><div class="ct">Security Checklist · P0.5</div>${bd(`${pass}/${checks.length} PASS`,"bd-gn")}</div>
+    <div class="cb" style="padding-top:8px;padding-bottom:8px">
+      ${checks.map(c=>`<div class="sci"><div class="sci-l"><span style="font-size:13px;width:20px;text-align:center">${c.i}</span><span>${c.l}</span></div><span class="st ${c.s==="PASS"?"pass":c.s==="WARN"?"warn":"fail"}">${c.s}</span></div>`).join("")}
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card">
+      <div class="ch"><div class="ct">DLP Scan Results</div>${bd("2 WARNINGS","bd-gd")}</div>
+      <div class="cb">
+        ${sr("PII Detection Rules","Active · 14 patterns","var(--gn)")}
+        ${sr("Cross-Tenant Leak Test","2 edge cases","var(--gd)")}
+        ${sr("Data Residency Enforcement","Configured","var(--gn)")}
+        ${sr("Sensitive Field Masking","Active","var(--gn)")}
+        <div class="abox" style="background:var(--gd2);border:1px solid rgba(240,192,64,.2);margin-top:12px">
+          <h4 style="color:var(--gd)">⚠ 2 Items Need Attention</h4>
+          <p>• Cross-region metadata exposure in VN tenant<br>• DLP rule gap: NH₃ sensor data path</p>
+          <button class="tb-btn" style="margin-top:8px;font-size:10px">Run DLP Fix →</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">RBAC Permission Matrix</div></div>
+      <div class="cb0">
+        <table class="tbl"><thead><tr><th>Role</th><th>Evidence</th><th>Billing</th><th>Audit</th><th>Admin</th></tr></thead>
+        <tbody>
+          ${rbacRow("Admin","✓","✓","✓","✓")}
+          ${rbacRow("Auditor","✓","✗","✓","✗")}
+          ${rbacRow("Finance","✗","✓","✗","✗")}
+          ${rbacRow("Farm Owner","✓","✗","✗","✗")}
+          ${rbacRow("Government","✓ RO","✗","✓ RO","✗")}
+        </tbody></table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Threat Timeline (24h)</div></div>
+      <div class="cb">
+        <div class="cw" style="height:72px">
+          <svg viewBox="0 0 500 60" preserveAspectRatio="none">${grids(2,500,60)}<path d="M0,52 L50,50 L100,46 L150,42 L200,40 L250,42 L300,16 L350,38 L400,36 L450,38 L500,34" class="cl-vi dvi"/><circle cx="300" cy="16" r="4" fill="var(--rd)" stroke="var(--bg)" stroke-width="1.5"/></svg>
+        </div>
+        <div style="font-size:9px;color:var(--t2);font-family:var(--fm);margin-top:4px">Spike at ${ts()} — Failed login ×3 · Auto-blocked · IP flagged</div>
+      </div>
+    </div>
+  </div>
+</div>`;}
+
+/* ════════════════════ TENANT REGIONS ════════════════════ */
+function pgTenantRegions(){const tc=TENANT_COPY[ST.lang]||TENANT_COPY.ko,rl=TENANT_REGION_LABELS[ST.lang]||TENANT_REGION_LABELS.ko;
+  const regions=[
+    {id:"kr",f:"🇰🇷",n:"Korea",p:"NHN Cloud Korea · ap-northeast-2",nd:14,tc:"1,284",law:"PIPA",s:"bd-gn",lat:"12ms",fc:"linear-gradient(90deg,#cd2e3a,#0047a0)"},
+    {id:"th",f:"🇹🇭",n:"Thailand",p:"Thailand Gov Cloud · BKK-1",nd:11,tc:"890",law:"PDPA TH",s:"bd-ac",lat:"52ms",fc:"linear-gradient(90deg,#a51931,#f4f5f8,#2d2a4a)"},
+    {id:"id",f:"🇮🇩",n:"Indonesia",p:"Jakarta Region · CGK-1",nd:9,tc:"612",law:"PDP Law",s:"bd-gd",lat:"78ms",fc:"linear-gradient(90deg,#ce1126,#fff)"},
+    {id:"my",f:"🇲🇾",n:"Malaysia",p:"MY Gov Cloud · KUL-1",nd:5,tc:"340",law:"PDPA MY",s:"bd-gn",lat:"61ms",fc:"linear-gradient(90deg,#cc0001,#fff,#006aff)"},
+    {id:"vn",f:"🇻🇳",n:"Vietnam",p:"Vietnam DC · HAN-1",nd:2,tc:"124",law:"Cybersec Law",s:"bd-gn",lat:"68ms",fc:"linear-gradient(90deg,#da251d,#da251d)"},
+    {id:"sg",f:"🇸🇬",n:"Singapore Hub",p:"AWS ap-southeast-1",nd:0,tc:"—",law:"PDPA SG",s:"bd-vi",lat:"—",fc:"linear-gradient(90deg,#ef3340,#fff)"},
+  ];
+  const stLab={"bd-gn":tc.active,"bd-ac":tc.active,"bd-gd":tc.configuring,"bd-vi":tc.planned,"bd-cy":tc.active,"bd-rd":tc.alert||"ALERT"};
+  const pCol={"bd-gn":"var(--gn)","bd-ac":"var(--ac)","bd-gd":"var(--gd)","bd-vi":"var(--vi)","bd-cy":"var(--cy)"};
+  return`
+<div class="fu d0" style="margin-bottom:16px">
+  <div style="font-size:18px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px">${tc.title}</div>
+  <div style="font-size:10px;color:var(--t2);font-family:var(--fm)">${tc.lead}</div>
+</div>
+<div style="background:linear-gradient(135deg,rgba(198,241,53,.05),rgba(0,208,255,.04));border:1px solid var(--ac3);border-radius:14px;padding:18px 22px;margin-bottom:16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap" class="fu d1">
+  <div style="font-size:28px">🌏</div>
+  <div style="flex:1;min-width:200px">
+    <div style="font-size:13px;font-weight:700;color:var(--ac);margin-bottom:3px">${tc.arch}</div>
+    <div style="font-size:10px;color:var(--t2);line-height:1.6">${tc.desc}</div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    ${miniStat2(tc.activeRegions,"5","var(--gn)")}
+    ${miniStat2(tc.planned,"1","var(--vi)")}
+    ${miniStat2(tc.totalNodes,"41","var(--ac)")}
+  </div>
+</div>
+<div class="g3 fu d2">
+  ${regions.map(r=>`<div class="rc"><div class="rc-bar" style="background:${r.fc}"></div><div style="margin-top:10px"><div style="font-size:22px;margin-bottom:8px">${r.f}</div><div style="font-size:12px;font-weight:700;margin-bottom:2px">${rl.countries[r.id]||r.n}</div><div style="font-size:9px;color:var(--t2);font-family:var(--fm);margin-bottom:10px">${rl.providers[r.id]||r.p}</div><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:8px">${bd(r.nd>0?tc.active:r.id==="sg"?tc.planned:tc.configuring,r.s)} ${bd(r.law,"bd-cy")}${r.lat!=="—"?`<span style="font-family:var(--fm);font-size:8px;color:var(--t2)">~${r.lat}</span>`:""}</div><div style="display:flex;gap:14px;margin-bottom:8px"><div style="font-size:9px;font-family:var(--fm)"><span style="color:var(--ac);font-weight:700">${r.nd}</span> <span style="color:var(--t2)">${tc.nodes}</span></div><div style="font-size:9px;font-family:var(--fm)"><span style="color:var(--gn);font-weight:700">${r.tc}</span> <span style="color:var(--t2)">tCO₂e</span></div></div><div class="pg"><div class="pf" style="width:${r.nd>0?Math.round(r.nd/14*100):10}%;background:${pCol[r.s]||"var(--vi)"}"></div></div></div></div>`).join("")}
+</div>
+<div class="g2 fu d3">
+  <div class="card">
+    <div class="ch"><div class="ct">${tc.rules}</div>${bd(tc.allCompliant,"bd-gn")}</div>
+    <div class="cb0">
+      <table class="tbl"><thead><tr><th>${tc.country}</th><th>${tc.storage}</th><th>${tc.regulation}</th><th>${tc.status}</th></tr></thead>
+      <tbody>
+        ${residRow(`🇰🇷 ${rl.countries.kr}`,rl.storage.kr,"PIPA",true)}
+        ${residRow(`🇹🇭 ${rl.countries.th}`,rl.storage.th,"PDPA",true)}
+        ${residRow(`🇮🇩 ${rl.countries.id}`,rl.storage.id,"PDP Law",false)}
+        ${residRow(`🇲🇾 ${rl.countries.my}`,rl.storage.my,"PDPA MY",true)}
+        ${residRow(`🇻🇳 ${rl.countries.vn}`,rl.storage.vn,"Cybersecurity Law",true)}
+        ${residRow(`🇪🇺 ${rl.countries.eu}`,rl.storage.eu,"GDPR Art.44",true)}
+      </tbody></table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">${tc.hub}</div>${bd(tc.live,"bd-ac",true)}</div>
+    <div class="cb">
+      <div style="font-size:10px;color:var(--t2);margin-bottom:14px;line-height:1.6">${tc.central}</div>
+      ${sr(tc.meta,"48,291","var(--ac)")}
+      ${sr(tc.queries,"142 / min","var(--cy)")}
+      ${sr(tc.latency,"< 100ms","var(--gn)")}
+      ${sr(tc.isolation,tc.verified,"var(--gn)")}
+      ${sr(tc.neverLeaves,tc.enforced,"var(--gn)")}
+      <div class="pg pg7" style="margin-top:14px"><div class="pf" style="width:100%;background:linear-gradient(90deg,var(--gn),var(--cy))"></div></div>
+      <div style="font-size:8px;color:var(--t2);font-family:var(--fm);margin-top:4px">${tc.full}</div>
+    </div>
+  </div>
+</div>`;}
+
+/* ════════════════════ REVENUE SHARE ════════════════════ */
+function pgRevenueShare(){const cu=C(),r=REVENUE_COPY[ST.lang]||REVENUE_COPY.ko;return`
+<div class="fu d0" style="margin-bottom:16px">
+  <div style="font-size:18px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px">${r.title}</div>
+  <div style="font-size:10px;color:var(--t2);font-family:var(--fm)">${r.lead}</div>
+</div>
+<div class="fbox fu d1">
+  <div class="ftxt">${r.formula.revenue} <span class="hl">× ${r.formula.trust}</span><span class="sp">→</span>${r.formula.owner} <span class="hl">50%</span><span class="sp">+</span>SignalCare <span class="hl">30%</span><span class="sp">+</span>${r.formula.partners} <span class="hl">20%</span></div>
+</div>
+<div class="krow k4 fu d2">
+  ${kc("🌾",r.cards.farm,cu.s+"42,710","var(--ac)",r.cards.farmSub)}
+  ${kc("◈",r.cards.platform,cu.s+"25,626","var(--cy)",r.cards.platformSub)}
+  ${kc("🤝",r.cards.partners,cu.s+"17,084","var(--vi)",r.cards.partnersSub)}
+  ${kc("💎",r.cards.pool,cu.a,"var(--gn)",r.cards.poolSub)}
+</div>
+<div class="g21 fu d3">
+  <div class="card">
+    <div class="ch"><div class="ct">${r.settlement}</div>${bd(r.quarter,"bd-cy")}</div>
+    <div class="cb0">
+      <table class="tbl"><thead><tr>${r.headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead>
+      <tbody>
+        ${settlRow(r.farms[0],"1,284",cu.s+"43,142",cu.s+"21,571",cu.s+"12,943","bd-gn",r)}
+        ${settlRow(r.farms[1],"890",cu.s+"29,904",cu.s+"14,952",cu.s+"8,971","bd-gn",r)}
+        ${settlRow(r.farms[2],"612",cu.s+"20,563",cu.s+"10,282",cu.s+"6,169","bd-gd",r)}
+        ${settlRow(r.farms[3],"340",cu.s+"11,424",cu.s+"5,712",cu.s+"3,427","bd-cy",r)}
+      </tbody></table>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card">
+      <div class="ch"><div class="ct">${r.partnerSplit}</div></div>
+      <div class="cb">
+        <div style="margin-bottom:12px">${rvBar(r)}</div>
+        ${sr(r.partnerRows.zenov,"8%","var(--vi)")}
+        ${sr(r.partnerRows.nhn,"5%","var(--cy)")}
+        ${sr(r.partnerRows.rebellions,"4%","var(--ac)")}
+        ${sr(r.partnerRows.data,"3%","var(--gd)")}
+        <div style="border-top:1px solid var(--b1);margin-top:10px;padding-top:10px">
+          ${sr(r.partnerRows.total,cu.s+"17,084","var(--t1)")}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">${r.growth}</div></div>
+      <div class="cb">
+        <div class="cw" style="height:82px">
+          <svg viewBox="0 0 500 72" preserveAspectRatio="none">${grids(2,500,72)}<path d="M0,64 L83,58 L166,49 L249,40 L332,28 L415,16 L500,8 L500,72 L0,72Z" class="ca-ac"/><path d="M0,64 L83,58 L166,49 L249,40 L332,28 L415,16 L500,8" class="cl-ac dac"/></svg>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);font-family:var(--fm);margin-top:4px">${r.months.map(m=>`<span>${m}</span>`).join("")}</div>
+        ${sr(r.mom,"+23%","var(--gn)")} ${sr(r.annualized,cu.s+"101,808","var(--ac)")}
+      </div>
+    </div>
+  </div>
+</div>`;}
+
+/* ════════════════════ GENERIC PLACEHOLDER ════════════════════ */
+function pgGeneric(k){
+  const ico={farms:"🌾",evidence:"🔐",compliance:"📋",asset:"◉",settlement:"💰",reports:"📊",settings:"⚙"};
+  return`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:380px;gap:16px;color:var(--t2)"><div style="font-size:56px;opacity:.2">${ico[k]||"◈"}</div><div style="font-size:20px;font-weight:700;color:var(--t1)">${nt(k)}</div><div style="font-size:11px;font-family:var(--fm);color:var(--t3)">Demo Version · Coming soon</div><button class="tb-btn" onclick="goPage('dashboard')" style="margin-top:8px">← ${nt("dashboard")}</button></div>`;
+}
+
+/* ════════════════════ ROUTER ════════════════════ */
+const PAGE_MAP={
+  dashboard:pgDashboard,
+  carbonMap:pgCarbonMap,
+  billing:pgBilling,
+  auditLogs:pgAuditLogs,
+  security:pgSecurity,
+  tenantRegions:pgTenantRegions,
+  revenueShare:pgRevenueShare,
+};
+
+function goPage(key){
+  ST.page=key;
+  const pg=L().pg[key]||{t:nt(key)};
+  document.querySelectorAll(".ni").forEach(el=>el.classList.toggle("on",el.dataset.k===key));
+  const ttl=document.getElementById("tbTitle"),bc=document.getElementById("tbCrumb");
+  if(ttl)ttl.textContent=key==="billing"?(BILLING_COPY[ST.lang]||BILLING_COPY.ko).title:key==="carbonMap"?(MAP_COPY[ST.lang]||MAP_COPY.ko).title:key==="tenantRegions"?(TENANT_COPY[ST.lang]||TENANT_COPY.ko).title:key==="revenueShare"?(REVENUE_COPY[ST.lang]||REVENUE_COPY.ko).title:(pg.t||nt(key));
+  if(bc)bc.textContent=nt(key);
+  const pc=document.getElementById("PC");
+  if(!pc)return;
+  pc.style.opacity="0";pc.style.transform="translateY(6px)";
+  setTimeout(()=>{
+    pc.innerHTML=(PAGE_MAP[key]||pgGeneric.bind(null,key))();
+    pc.style.transition="opacity .38s var(--ez),transform .38s var(--ez)";
+    pc.style.opacity="1";pc.style.transform="translateY(0)";
+    /* animate progress bars & chart annotations */
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      pc.querySelectorAll(".pf").forEach(el=>{const w=el.style.width;el.style.width="0";setTimeout(()=>{el.style.transition="width 1.4s var(--ez)";el.style.width=w;},50);});
+      setTimeout(()=>{["pkDot","ltDot","pkLn","pkTxt"].forEach(id=>{const el=document.getElementById(id);if(el)el.style.opacity="1";});},2000);
+    }));
+    applyDashboardLanguage();
+  },180);
+}
+
+/* ════════════════════ NAV BUILD ════════════════════ */
+function buildNav(){
+  const wrap=document.getElementById("navWrap");
+  if(!wrap)return;
+  wrap.innerHTML="";
+  NAV.forEach(sec=>{
+    const s=document.createElement("div");s.className="sb-sec";s.textContent=t(sec.sec)||sec.sec;wrap.appendChild(s);
+    sec.items.forEach(item=>{
+      const el=document.createElement("div");
+      el.className="ni"+(item.k===ST.page?" on":"");
+      el.dataset.k=item.k;
+      el.innerHTML=`<span class="ni-ico">${item.i}</span><span class="sb-lbl">${nt(item.k)}</span>${item.nb?`<span class="nb ${item.nb.c}">${item.nb.t}</span>`:""}`;
+      el.onclick=()=>goPage(item.k);
+      wrap.appendChild(el);
+    });
+  });
+}
+
+/* ════════════════════ SIDEBAR TOGGLE ════════════════════ */
+function toggleSB(){
+  ST.mini=!ST.mini;
+  document.getElementById("SB").classList.toggle("mini",ST.mini);
+  document.getElementById("MA").classList.toggle("wide",ST.mini);
+  const btn=document.getElementById("sbTog");if(btn)btn.textContent=ST.mini?"▶":"◀";
+}
+
+/* ════════════════════ LANG / CURRENCY ════════════════════ */
+function setLang(code){
+  ST.lang=code;
+  const dir=(LANG[code]||LANG.en).dir;
+  document.documentElement.setAttribute("lang",code);
+  document.documentElement.setAttribute("dir",dir);
+  buildNav();
+  goPage(ST.page);
+  setTimeout(applyDashboardLanguage,220);
+  const sf=document.getElementById("sfSys");if(sf)sf.textContent=t("opn");
+  const sfL=document.getElementById("sfLive");if(sfL)sfL.textContent="41 "+t("sov").toUpperCase()+" NODES";
+}
+function setCur(code){ST.cur=code;goPage(ST.page);}
+
+async function logout(){
+  try{await fetch("/api/logout",{method:"POST"});}catch(e){}
+  location.href="/login";
+}
+
+/* ════════════════════ LIVE DATA ENGINE ════════════════════ */
+function startLive(){
+  /* SHA-256 hash stream */
+  setInterval(()=>{
+    const hs=document.getElementById("hashStream");
+    if(!hs)return;
+    const row=document.createElement("div");row.className="hr";
+    row.innerHTML=`<span class="hts">${ts()}</span><span class="hv">${s64()}</span><span class="hn">NEW</span>`;
+    hs.prepend(row);
+    while(hs.children.length>9)hs.removeChild(hs.lastChild);
+  },2400);
+
+  /* Topbar hash ticker */
+  setInterval(()=>{const el=document.getElementById("tbHash");if(el)el.textContent=s8()+"…";},2400);
+
+  /* Live CH4 */
+  setInterval(()=>{
+    ST.liveCH4=Math.max(12,Math.min(18,ST.liveCH4+(Math.random()-.47)*.25));
+    const el=document.getElementById("dCH4");if(el)el.textContent=`CH₄ ${ST.liveCH4.toFixed(2)} ppm`;
+  },1800);
+
+  /* Asset counter */
+  setInterval(()=>{
+    ST.liveAsset+=Math.random()*2.4;
+    const el=document.getElementById("dAsset");
+    if(el)el.textContent=C().s+Math.round(ST.liveAsset).toLocaleString("en-US");
+  },3000);
+}
+
+/* ════════════════════ INIT ════════════════════ */
+function init(){
+  buildNav();
+  goPage("dashboard");
+  startLive();
+  /* Keyboard shortcuts */
+  document.addEventListener("keydown",e=>{
+    if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT")return;
+    const m={d:"dashboard",m:"carbonMap",b:"billing",a:"auditLogs",s:"security",t:"tenantRegions",r:"revenueShare"};
+    if(m[e.key])goPage(m[e.key]);
+  });
+}
+window.addEventListener("DOMContentLoaded",init);
+</script>
+
+<!-- KB hint -->
+<div style="position:fixed;bottom:14px;right:14px;z-index:990;display:flex;gap:5px;flex-wrap:wrap;max-width:220px;justify-content:flex-end;opacity:.28;pointer-events:none">
+  <span style="font-family:var(--fm);font-size:7.5px;color:var(--t2);background:var(--b1);padding:2px 5px;border-radius:3px">D</span>
+  <span style="font-family:var(--fm);font-size:7.5px;color:var(--t2);background:var(--b1);padding:2px 5px;border-radius:3px">M=Map</span>
+  <span style="font-family:var(--fm);font-size:7.5px;color:var(--t2);background:var(--b1);padding:2px 5px;border-radius:3px">B=Billing</span>
+  <span style="font-family:var(--fm);font-size:7.5px;color:var(--t2);background:var(--b1);padding:2px 5px;border-radius:3px">A=Audit</span>
+  <span style="font-family:var(--fm);font-size:7.5px;color:var(--t2);background:var(--b1);padding:2px 5px;border-radius:3px">S=Security</span>
+  <span style="font-family:var(--fm);font-size:7.5px;color:var(--t2);background:var(--b1);padding:2px 5px;border-radius:3px">T=Tenant</span>
+  <span style="font-family:var(--fm);font-size:7.5px;color:var(--t2);background:var(--b1);padding:2px 5px;border-radius:3px">R=Revenue</span>
+</div>
+</body>
+</html>
